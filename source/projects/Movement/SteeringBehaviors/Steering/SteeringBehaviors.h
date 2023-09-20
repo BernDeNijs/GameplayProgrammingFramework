@@ -48,6 +48,7 @@ public:
 
 	//Seek Behavior
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent,TargetData altTarget);
 };
 
 ///////////////////////////////////////

@@ -6,14 +6,20 @@
 #include "../SteeringAgent.h"
 #include "../Obstacle.h"
 #include "framework/EliteMath/EMatrix2x3.h"
+using namespace Elite;
 
 //SEEK
 //****
 SteeringOutput Seek::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
+	return Seek::CalculateSteering(deltaT, pAgent, m_Target);
+}
+
+SteeringOutput Seek::CalculateSteering(float deltaT, SteeringAgent* pAgent, TargetData altTarget)
+{
 	SteeringOutput steering = {};
 
-	steering.LinearVelocity = m_Target.Position - pAgent->GetPosition();
+	steering.LinearVelocity = altTarget.Position - pAgent->GetPosition();
 	steering.LinearVelocity.Normalize();
 	steering.LinearVelocity *= pAgent->GetMaxLinearSpeed();
 
@@ -30,11 +36,8 @@ SteeringOutput Seek::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 SteeringOutput Flee::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
 	SteeringOutput steering = {};
-
-	steering.LinearVelocity = m_Target.Position - pAgent->GetPosition();
-	steering.LinearVelocity.Normalize();
-	steering.LinearVelocity *= -1;
-	steering.LinearVelocity *= pAgent->GetMaxLinearSpeed();
+	const TargetData altTarget = pAgent->GetPosition() - (m_Target.Position - pAgent->GetPosition());
+	steering = Seek::CalculateSteering(deltaT, pAgent, altTarget);
 
 	if (pAgent->CanRenderBehavior())
 	{
@@ -51,8 +54,8 @@ SteeringOutput Flee::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
 	SteeringOutput steering = {};
-	const float slowArea{ 15.f };
-	const float stopDistance{ 5.f };
+	const float slowArea{ m_Outer };
+	const float stopDistance{ m_InnerRadius };
 
 	steering.LinearVelocity = m_Target.Position - pAgent->GetPosition();
 
@@ -66,7 +69,7 @@ SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 	{
 		steering.LinearVelocity *= 0.f;
 	}
-	if (distance < slowArea)
+	else if (distance < slowArea)
 	{
 		steering.LinearVelocity *= pAgent->GetMaxLinearSpeed() * ((distance - stopDistance) / slowArea);
 	}
@@ -79,6 +82,8 @@ SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 	if (pAgent->CanRenderBehavior())
 	{
 		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), steering.LinearVelocity, 5, { 0,1,0 });
+		DEBUGRENDERER2D->DrawCircle(m_Target.Position, slowArea, Color{ 0.f,0.f,1.f },DEBUGRENDERER2D->NextDepthSlice());
+		DEBUGRENDERER2D->DrawCircle(m_Target.Position, stopDistance, Color{ 1.f,0.f,0.f }, DEBUGRENDERER2D->NextDepthSlice());
 	}
 
 	return steering;
@@ -141,17 +146,18 @@ SteeringOutput Wander::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 //****
 SteeringOutput Pursuit::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
+	TargetData altTarget = m_Target;
 	if (m_Target.LinearVelocity.Magnitude() > 0.f)
 	{
-		m_Target.Position += m_Target.GetDirection() * (m_Target.Position - pAgent->GetPosition()).Magnitude() / pAgent->GetMaxLinearSpeed();
+		altTarget.Position += m_Target.LinearVelocity * (m_Target.Position - pAgent->GetPosition()).Magnitude() / pAgent->GetMaxLinearSpeed();
 	}
 
 	if (pAgent->CanRenderBehavior())
 	{
-		DEBUGRENDERER2D->DrawSolidCircle(m_Target.Position, 0.25f, {}, { 1.f, 0.f, 1.f }, 0.40f);
+		DEBUGRENDERER2D->DrawSolidCircle(altTarget.Position, 0.25f, {}, { 1.f, 0.f, 1.f }, DEBUGRENDERER2D->NextDepthSlice());
 	}
 
-	return Seek::CalculateSteering(deltaT, pAgent);
+	return Seek::CalculateSteering(deltaT, pAgent, altTarget);
 }
 
 //EVADE
