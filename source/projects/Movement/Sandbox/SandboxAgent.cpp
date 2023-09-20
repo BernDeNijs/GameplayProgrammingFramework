@@ -10,6 +10,16 @@ SandboxAgent::SandboxAgent() : BaseAgent()
 
 void SandboxAgent::Update(float dt)
 {
+	constexpr float speed = 1000.f;
+
+
+	const auto pos = GetPosition();
+	const auto dir = m_Target - pos;
+	const auto velocity = dir.GetNormalized() * speed * dt;
+
+	SetLinearVelocity(velocity);
+
+	DEBUGRENDERER2D->DrawSegment(pos, pos+(dir.GetNormalized()*5.f), Color{0.f,1.f,0.f});
 	//Orientation
 	AutoOrient();
 }
@@ -25,9 +35,7 @@ void SandboxAgent::AutoOrient()
 	Vector2 velocity = GetLinearVelocity();
 	if (velocity.Magnitude() > 0)
 	{
-		velocity.Normalize();
-		SetRotation(atan2(velocity.y, velocity.x) + E_PI_2);
+		
+		SetRotation(VectorToOrientation(velocity));
 	}
-
-	SetRotation(GetRotation() + E_PI_2);
 }

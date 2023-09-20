@@ -2,10 +2,10 @@
 // Here we determine which application is currently active
 // Create the define here using the "ActiveApp_..." convention and set up the correct include and typedef in the #ifdef below.
 
-//#define ActiveApp_Sandbox
+#define ActiveApp_Sandbox
 //#define ActiveApp_Steering
 //#define ActiveApp_CombinedSteering
-#define ActiveApp_Flocking
+//#define ActiveApp_Flocking
 
 //---------- Registered Applications -----------
 #ifdef ActiveApp_Sandbox
