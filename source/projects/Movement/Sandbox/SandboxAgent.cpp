@@ -3,7 +3,7 @@
 
 using namespace Elite;
 
-SandboxAgent::SandboxAgent(): BaseAgent()
+SandboxAgent::SandboxAgent() : BaseAgent()
 {
 	m_Target = GetPosition();
 }

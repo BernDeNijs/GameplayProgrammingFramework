@@ -28,7 +28,9 @@ public:
 
 	template<class T, typename std::enable_if<std::is_base_of<ISteeringBehavior, T>::value>::type* = nullptr>
 	T* As()
-	{ return static_cast<T*>(this); }
+	{
+		return static_cast<T*>(this);
+	}
 
 protected:
 	TargetData m_Target;
@@ -44,10 +46,103 @@ public:
 	Seek() = default;
 	virtual ~Seek() = default;
 
-	//Seek Behaviour
+	//Seek Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+///////////////////////////////////////
+//FLEE
+//****
+class Flee : public Seek
+{
+public:
+	Flee() = default;
+	virtual ~Flee() = default;
+
+	//Flee Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+///////////////////////////////////////
+//ARRIVE
+//****
+class Arrive : public Seek
+{
+public:
+	Arrive() = default;
+	virtual ~Arrive() = default;
+
+	//Arrive Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+	
+private:
+	const float m_InnerRadius{ 3.f };
+	const float m_Outer{ 14.5f };
+};
+
+///////////////////////////////////////
+//FACE
+//****
+class Face : public ISteeringBehavior
+{
+public:
+	Face() = default;
+	virtual ~Face() = default;
+
+	//Face Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+///////////////////////////////////////
+//WANDER
+//****
+class Wander : public Seek
+{
+public:
+	Wander() = default;
+	virtual ~Wander() = default;
+
+	//Wander Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+
+	void SetMaxAngle(const float& rad) { m_MaxAngle = rad; }
+	void SetOffset(const float& offset) { m_Offset = offset; }
+	void SetRadius(const float& radius) { m_Radius = radius; }
+
+private:
+	float m_MaxAngle{ Elite::ToRadians(40.f) };
+	float m_Offset{ 10.f }; 
+	float m_Radius{ 5.f }; 
+	float m_Angle{ 0.f };
+};
+
+///////////////////////////////////////
+//PURSUIT
+//****
+class Pursuit : public Seek
+{
+public:
+	Pursuit() = default;
+	virtual ~Pursuit() = default;
+
+	//Pursuit Behavior
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+///////////////////////////////////////
+//EVADE
+//****
+class Evade : public Pursuit
+{
+public:
+	Evade() = default;
+	virtual ~Evade() = default;
+	void SetEvadeRange(const float& range) { m_EvadeRange = range; }
+
+	private:
+	float	m_EvadeRange{0};
+	//Pursuit Behavior
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
 };
 
 #endif
-
-

@@ -27,17 +27,17 @@ private:
 
 	enum class BehaviorTypes :int
 	{
+		Align,
+		Arrive,
+		AvoidObstacle,
+		Evade,
+		Face,
+		FacedArrive,
+		Flee,
+		Hide,
+		Pursuit,
 		Seek,
 		Wander,
-		Flee,
-		Arrive,
-		Face,
-		Evade,
-		Pursuit,
-		Hide,
-		AvoidObstacle,
-		Align,
-		FacedArrive,
 
 		//@end
 		Count
