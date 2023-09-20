@@ -112,6 +112,36 @@ SteeringOutput Face::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 
 
 	return steering;
+
+
+	//SteeringOutput steering = {};
+	//pAgent->SetAutoOrient(false);
+
+	//Elite::Vector2 directionVector = m_Target.Position - pAgent->GetPosition();
+
+	//directionVector.Normalize();
+
+	//constexpr auto floatPi = static_cast<float>(E_PI);
+	//auto angle = Elite::VectorToOrientation(directionVector) - ((VectorToOrientation( pAgent->GetDirection())));
+	//while (angle <= -floatPi) {
+	//	angle += 2 * floatPi;
+	//}
+	//while (angle > floatPi) {
+	//	angle -= 2 * floatPi;
+	//}
+
+
+	//if (angle > 0)
+	//{
+	//	steering.AngularVelocity = pAgent->GetMaxAngularSpeed();
+	//}
+	//else
+	//{
+	//	steering.AngularVelocity = -pAgent->GetMaxAngularSpeed();
+	//}
+
+
+	//return steering;
 }
 
 //WANDER
