@@ -35,8 +35,9 @@ private:
 	bool m_TrimWorld = true;
 	float m_TrimWorldSize = 25.f;
 
-	SteeringAgent* m_pDrunkAgent{ nullptr };
-	SteeringAgent* m_pEvadingAgent{ nullptr };
+	// Agents
+	SteeringAgent* m_pDrunkAgent{ nullptr }; // Seek Wander
+	SteeringAgent* m_pEvadingAgent{ nullptr }; // Evade Wander
 
 	// Blended Steering
 	BlendedSteering* m_pBlendedSteering{ nullptr };

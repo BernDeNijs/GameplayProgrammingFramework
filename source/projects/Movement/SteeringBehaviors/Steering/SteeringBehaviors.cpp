@@ -6,6 +6,8 @@
 #include "../SteeringAgent.h"
 #include "../Obstacle.h"
 #include "framework/EliteMath/EMatrix2x3.h"
+
+#include <numbers>
 using namespace Elite;
 
 //SEEK
@@ -60,7 +62,7 @@ SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 	steering.LinearVelocity = m_Target.Position - pAgent->GetPosition();
 
 
-	float distance = steering.LinearVelocity.Magnitude();
+	const float distance = steering.LinearVelocity.Magnitude();
 	steering.LinearVelocity.Normalize();
 
 
@@ -93,55 +95,30 @@ SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 //****
 SteeringOutput Face::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
+	SteeringOutput  steering{};
 	pAgent->SetAutoOrient(false);
-	SteeringOutput steering = {};
 
-	Elite::Vector2 directionVector = m_Target.Position - pAgent->GetPosition();
-	directionVector.Normalize();
+	float angle = VectorToOrientation(m_Target.Position - pAgent->GetPosition()) - pAgent->GetRotation();
+	constexpr auto floatPi = static_cast<float>(E_PI);
+	if (angle <= -floatPi)
+	{
+		angle += 2 * floatPi;
+	}
+	if (angle > floatPi)
+	{
+		angle -= 2 * floatPi;
+	}
 
-	steering.AngularVelocity = Elite::VectorToOrientation(directionVector) - ((pAgent->GetRotation()));
-
-	if (steering.AngularVelocity > pAgent->GetMaxAngularSpeed())
+	if (angle > 0)
 	{
 		steering.AngularVelocity = pAgent->GetMaxAngularSpeed();
 	}
-	else if (steering.AngularVelocity < -(pAgent->GetMaxAngularSpeed()))
+	else
 	{
-		steering.AngularVelocity = -(pAgent->GetMaxAngularSpeed());
+		steering.AngularVelocity = -pAgent->GetMaxAngularSpeed();
 	}
 
-
 	return steering;
-
-
-	//SteeringOutput steering = {};
-	//pAgent->SetAutoOrient(false);
-
-	//Elite::Vector2 directionVector = m_Target.Position - pAgent->GetPosition();
-
-	//directionVector.Normalize();
-
-	//constexpr auto floatPi = static_cast<float>(E_PI);
-	//auto angle = Elite::VectorToOrientation(directionVector) - ((VectorToOrientation( pAgent->GetDirection())));
-	//while (angle <= -floatPi) {
-	//	angle += 2 * floatPi;
-	//}
-	//while (angle > floatPi) {
-	//	angle -= 2 * floatPi;
-	//}
-
-
-	//if (angle > 0)
-	//{
-	//	steering.AngularVelocity = pAgent->GetMaxAngularSpeed();
-	//}
-	//else
-	//{
-	//	steering.AngularVelocity = -pAgent->GetMaxAngularSpeed();
-	//}
-
-
-	//return steering;
 }
 
 //WANDER
@@ -194,26 +171,21 @@ SteeringOutput Pursuit::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 //****
 SteeringOutput Evade::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
-	SteeringOutput steering{ Pursuit::CalculateSteering(deltaT, pAgent) };
-
-	steering.LinearVelocity = -steering.LinearVelocity;
-
-
-	Elite::Vector2 distanceVector{
-		pAgent->GetPosition().x - m_Target.Position.x,
-		pAgent->GetPosition().y - m_Target.Position.y
-	};
-
-	float distanceToTargetSquared = 
-		powf(pAgent->GetPosition().x - m_Target.Position.x,2)
-		+ powf(pAgent->GetPosition().y - m_Target.Position.y,2);
-	if (m_EvadeRange != 0)
+	const float distanceToTargetSquared = pAgent->GetPosition().DistanceSquared(m_Target.Position);
+	
+	if (m_EvadeRange != -1)
 	{
 		if (m_EvadeRange * m_EvadeRange < distanceToTargetSquared)
 		{
-			steering.IsValid = false;
+			SteeringOutput output{};
+			output.IsValid = false;
+			return output;
 		}
 	}
+
+	SteeringOutput steering{ Pursuit::CalculateSteering(deltaT, pAgent) };
+	steering.LinearVelocity = -steering.LinearVelocity;
+
 	if (pAgent->CanRenderBehavior())
 	{
 		DEBUGRENDERER2D->DrawCircle(pAgent->GetPosition(), m_EvadeRange, {0.f, 0.f, 1.f, 0.5f}, 0.40f);

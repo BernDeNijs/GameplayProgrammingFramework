@@ -25,27 +25,34 @@ void App_CombinedSteering::Start()
 	DEBUGRENDERER2D->GetActiveCamera()->SetZoom(55.0f);
 	DEBUGRENDERER2D->GetActiveCamera()->SetCenter(Elite::Vector2(m_TrimWorldSize / 1.5f, m_TrimWorldSize / 2));
 
+	// Drunk Agent
 	m_pSeek = new Seek();
 	m_pDrunkWander = new Wander();
 	m_pDrunkWander->SetOffset(0.f);
-	m_pBlendedSteering = new BlendedSteering({ { m_pSeek, 0.5f }, { m_pDrunkWander, 0.5f } });
+	m_pBlendedSteering = new BlendedSteering({ 
+		{ m_pSeek, 0.5f }, 
+		{ m_pDrunkWander, 0.5f } });
 
 	m_pDrunkAgent = new SteeringAgent();
 	m_pDrunkAgent->SetSteeringBehavior(m_pBlendedSteering);
 	m_pDrunkAgent->SetMaxLinearSpeed(15.f);
-	m_pDrunkAgent->SetMass(0.f);
+	m_pDrunkAgent->SetMass(1.f);
 	m_pDrunkAgent->SetAutoOrient(true);
 	m_pDrunkAgent->SetBodyColor({ 1,0,0 });
 
+	// Evading Agent
 	m_pEvade = new Evade();
 	m_pEvade->SetEvadeRange(5.f);
 	m_pWander = new Wander();
-	m_pPrioritySteering = new PrioritySteering({ m_pEvade, m_pWander });
+	m_pPrioritySteering = new PrioritySteering({ 
+		m_pEvade, 
+		m_pWander });
+
 
 	m_pEvadingAgent = new SteeringAgent();
 	m_pEvadingAgent->SetSteeringBehavior(m_pPrioritySteering);
 	m_pEvadingAgent->SetMaxLinearSpeed(15.f);
-	m_pEvadingAgent->SetMass(0.f);
+	m_pEvadingAgent->SetMass(1.f);
 	m_pEvadingAgent->SetAutoOrient(true);
 }
 
@@ -71,7 +78,7 @@ void App_CombinedSteering::Update(float deltaTime)
 	m_pEvadingAgent->Update(deltaTime);
 	m_pEvadingAgent->SetRenderBehavior(m_CanDebugRender);
 
-	if (static_cast<bool>(m_TrimWorldSize))
+	if (m_TrimWorld)
 	{
 		m_pDrunkAgent->TrimToWorld(m_TrimWorldSize);
 		m_pEvadingAgent->TrimToWorld(m_TrimWorldSize);

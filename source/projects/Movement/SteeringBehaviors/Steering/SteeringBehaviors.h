@@ -139,11 +139,11 @@ public:
 	Evade() = default;
 	virtual ~Evade() = default;
 	void SetEvadeRange(const float& range) { m_EvadeRange = range; }
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
 
 	private:
-	float	m_EvadeRange{0};
-	//Pursuit Behavior
-	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+	float	m_EvadeRange{-1};
+	
 };
 
 #endif
