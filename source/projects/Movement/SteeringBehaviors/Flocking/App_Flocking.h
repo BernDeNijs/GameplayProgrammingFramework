@@ -31,7 +31,7 @@ private:
 	bool m_VisualizeMouseTarget = true;
 
 	float m_TrimWorldSize = 100.f;
-	int m_FlockSize = 500;
+	int m_FlockSize = 100;
 
 	Flock* m_pFlock = nullptr;
 	SteeringAgent* m_pAgentToEvade = nullptr;

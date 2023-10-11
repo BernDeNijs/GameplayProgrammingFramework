@@ -6,6 +6,7 @@ class ISteeringBehavior;
 class SteeringAgent;
 class BlendedSteering;
 class PrioritySteering;
+class CellSpace;
 
 class Flock final
 {
@@ -23,8 +24,8 @@ public:
 	void Render(float deltaT);
 
 	void RegisterNeighbors(SteeringAgent* pAgent);
-	int GetNrOfNeighbors() const { return m_NrOfNeighbors; }
-	const std::vector<SteeringAgent*>& GetNeighbors() const { return m_Neighbors; }
+	int GetNrOfNeighbors() const;
+	const std::vector<SteeringAgent*>& GetNeighbors() const;
 
 	Elite::Vector2 GetAverageNeighborPos() const;
 	Elite::Vector2 GetAverageNeighborVelocity() const;
@@ -37,6 +38,7 @@ private:
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
+	CellSpace* m_pCellSpace;
 
 	bool m_TrimWorld = false;
 	float m_WorldSize = 0.f;
@@ -52,13 +54,16 @@ private:
 	VelocityMatch* m_pVelMatchBehavior = nullptr;
 	Seek* m_pSeekBehavior = nullptr;
 	Wander* m_pWanderBehavior = nullptr;
-	//Evade* m_pEvadeBehavior = nullptr;
+	Evade* m_pEvadeBehavior = nullptr;
 
 	BlendedSteering* m_pBlendedSteering = nullptr;
 	PrioritySteering* m_pPrioritySteering = nullptr;
 
 	void RenderNeighborhood();
 	float* GetWeight(ISteeringBehavior* pBehaviour);
+
+	bool m_RenderNeighboorhood{ false };
+	bool m_SpacialPartitioning{ false };
 
 private:
 	Flock(const Flock& other);

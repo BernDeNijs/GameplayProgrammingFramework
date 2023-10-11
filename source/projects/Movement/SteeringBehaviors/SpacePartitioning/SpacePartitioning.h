@@ -25,7 +25,7 @@ struct Cell
 	Cell(float left, float bottom, float width, float height);
 
 	std::vector<Elite::Vector2> GetRectPoints() const;
-
+	
 	// all the agents currently in this cell
 	std::list<SteeringAgent*> agents;
 	Elite::Rect boundingBox;
@@ -39,9 +39,9 @@ public:
 	CellSpace(float width, float height, int rows, int cols, int maxEntities);
 
 	void AddAgent(SteeringAgent* agent);
-	void UpdateAgentCell(SteeringAgent* agent, Elite::Vector2 oldPos);
+	void AgentPositionChanged(SteeringAgent* agent, Elite::Vector2 oldPos);
 
-	void RegisterNeighbors(SteeringAgent* agent, float queryRadius);
+	void RegisterNeighbors(SteeringAgent* pAgent, float neighborhoodRadius);
 	const std::vector<SteeringAgent*>& GetNeighbors() const { return m_Neighbors; }
 	int GetNrOfNeighbors() const { return m_NrOfNeighbors; }
 

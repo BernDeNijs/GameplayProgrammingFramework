@@ -19,14 +19,13 @@ SteeringOutput Cohesion::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 SteeringOutput Separation::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
 	SteeringOutput steering;
-	const auto neighbors = m_pFlock->GetNeighbors();
 	const auto nrOfNeighbors = m_pFlock->GetNrOfNeighbors();
 	const auto agentPos = pAgent->GetPosition();
 	for (int i = 0; i < nrOfNeighbors; i++)
 	{
-		const auto neighborPos = neighbors[i]->GetPosition();
+		const auto neighborPos = m_pFlock->GetNeighbors()[i]->GetPosition();
 		const float distance = agentPos.Distance(neighborPos);
-		steering.LinearVelocity += (neighborPos - agentPos).GetNormalized()/distance;
+		steering.LinearVelocity -= (neighborPos - agentPos).GetNormalized()/distance;
 	}
 	steering.LinearVelocity.Normalize();
 	steering.LinearVelocity *= pAgent->GetMaxLinearSpeed();
