@@ -66,7 +66,7 @@ void CellSpace::AgentPositionChanged(SteeringAgent* agent, Elite::Vector2 oldPos
 	if (oldIdx == newIdx) return;
 
 	m_Cells[oldIdx].agents.remove(agent);
-	m_Cells[newIdx].agents.push_front(agent);
+	m_Cells[newIdx].agents.push_back(agent);
 	//AddAgent(agent);
 	
 	
@@ -92,9 +92,11 @@ void CellSpace::RegisterNeighbors(SteeringAgent* pAgent, float neighborhoodRadiu
 	{
 		if (Elite::IsOverlapping(agentRect,m_Cells[i].boundingBox))
 		{
+			/*DEBUGRENDERER2D->DrawCircle(m_Cells[i].boundingBox.bottomLeft, m_CellWidth/2.f ,{ 1.f,0.f,0.f }, DEBUGRENDERER2D->NextDepthSlice());*/
+
 			for (const auto& agent : m_Cells[i].agents)
 			{
-				if (&agent == &pAgent) continue; //changed
+				if (&agent == &pAgent) continue;
 				const float distanceSquared = pAgent->GetPosition().DistanceSquared(agent->GetPosition());
 
 				if (distanceSquared <= neighborhoodRadius * neighborhoodRadius)

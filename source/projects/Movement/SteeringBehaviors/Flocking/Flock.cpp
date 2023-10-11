@@ -39,6 +39,12 @@ Flock::Flock(
 	int maxEntities = m_FlockSize;
 
 	m_pCellSpace = new CellSpace(m_WorldSize, m_WorldSize, cellRows, cellColumns, maxEntities);
+
+	m_OldPositions.reserve(m_FlockSize);
+	for (int i = 0; i < m_FlockSize; i++)
+	{
+		m_OldPositions.push_back({ 0.f,0.f });
+	}
 	//--
 
 
@@ -123,22 +129,33 @@ void Flock::Update(float deltaT)
 		m_pAgentToEvade->GetAngularVelocity() 
 		});
 
-	for (const auto& agent : m_Agents)
+	for (int i = 0; i < m_FlockSize; i++)
 	{
-		const Elite::Vector2 oldPos = agent->GetPosition();
+		RegisterNeighbors(m_Agents[i]);
+		m_Agents[i]->Update(deltaT);
+		if (m_SpacialPartitioning)
+		{
+			m_pCellSpace->AgentPositionChanged(m_Agents[i], m_OldPositions[i]);
+		}
+		m_Agents[i]->TrimToWorld(m_WorldSize);
+		m_OldPositions[i] = (m_Agents[i]->GetPosition());
+	}
+
+	/*for (const auto& agent : m_Agents)
+	{
 		RegisterNeighbors(agent);
 		agent->Update(deltaT);
-		
 		if (m_SpacialPartitioning)
 		{
 			m_pCellSpace->AgentPositionChanged(agent, oldPos);
 		}
 		agent->TrimToWorld(m_WorldSize);
-	}
+		
+	}*/
 	m_pAgentToEvade->Update(deltaT);
 	m_pAgentToEvade->TrimToWorld(m_WorldSize);
 
-
+	
 }
 
 void Flock::Render(float deltaT)
@@ -162,6 +179,7 @@ void Flock::Render(float deltaT)
 	{
 		m_Agents[0]->SetRenderBehavior(false);
 	}
+
 
 	m_pCellSpace->RenderCells();
 }

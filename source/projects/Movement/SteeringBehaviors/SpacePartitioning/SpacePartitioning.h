@@ -63,6 +63,8 @@ private:
 	float m_CellWidth;
 	float m_CellHeight;
 
+	int m_maxNeighbors;
+
 	// Members to avoid memory allocation on every frame
 	std::vector<SteeringAgent*> m_Neighbors;
 	int m_NrOfNeighbors;

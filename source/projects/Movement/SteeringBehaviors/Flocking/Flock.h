@@ -38,6 +38,7 @@ private:
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
+	std::vector<Elite::Vector2> m_OldPositions;
 	CellSpace* m_pCellSpace;
 
 	bool m_TrimWorld = false;
