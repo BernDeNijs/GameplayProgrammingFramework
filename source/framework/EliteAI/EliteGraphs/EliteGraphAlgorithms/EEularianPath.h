@@ -37,20 +37,39 @@ namespace Elite
 	{
 
 		// If the graph is not connected, there can be no Eulerian Trail
+		if (!IsConnected) return Eulerianity::notEulerian;
 
 
 		// Count nodes with odd degree 
-
+		auto nodes = m_pGraph->GetAllNodes();
+		int oddCount = 0;
+		for (const auto& node : nodes)
+		{
+			if (static_cast<int> (m_pGraph->GetConnectionsFromNode(node).size()) & 1 ) // check if rightmost bit is 1 (uneven)
+			{
+				++oddCount;
+			}
+		}
 
 		// A connected graph with more than 2 nodes with an odd degree (an odd amount of connections) is not Eulerian
-
+		if (oddCount > 2 || oddCount == 1)
+		{
+			return Eulerianity::notEulerian;
+		}
 
 		// A connected graph with exactly 2 nodes with an odd degree is Semi-Eulerian (unless there are only 2 nodes)
 		// An Euler trail can be made, but only starting and ending in these 2 nodes
 
+		if (oddCount == 2)
+		{
+			return Eulerianity::semiEulerian;
+		}
+		
+		
+
 
 		// A connected graph with no odd nodes is Eulerian
-
+		return Eulerianity::eulerian;
 	}
 
 	inline std::vector<GraphNode*> EulerianPath::FindPath(Eulerianity& eulerianity) const
@@ -88,12 +107,39 @@ namespace Elite
 			return false;
 
 		// find a valid starting node that has connections
-		
-		// if no valid node could be found, return false
+		GraphNode* startingNode = nodes[0];
+		//for (int i = 0; i < nodes.size(); i++)
+		//{
+
+		//	const int nodeId = nodes[i]->GetId();
+		//	if (!m_pGraph->GetConnectionsFromNode(nodeId).empty()) //if there are connections
+		//	{
+		//		startingNode = node;
+		//		break;
+		//	}
+		//	
+		//}		
+		//// if no valid node could be found, return false
+		//if (startingNode == nullptr)
+		//{
+		//	return false;
+		//}
+
+
 
 		// start a depth-first-search traversal from the node that has at least one connection
+		std::vector<bool> visited{};
+		VisitAllNodesDFS(nodes, visited,0 );
 
 		// if a node was never visited, this graph is not connected
+			for (const bool& visit : visited)
+			{
+				if (visit == false)
+				{
+					return false;
+				}
+			}
+			return true;
 	}
 
 }

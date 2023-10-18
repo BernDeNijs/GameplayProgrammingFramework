@@ -63,6 +63,14 @@ void App_GraphTheory::Update(float deltaTime)
 	if (m_pGraphEditor->UpdateGraph(m_pGraph))
 	{
 		m_pGraph->SetConnectionCostsToDistances();
+
+		//check if eularian
+		const EulerianPath pathFinder = EulerianPath(m_pGraph);
+		Eulerianity eulerianity = pathFinder.IsEulerian();
+
+		const auto path = pathFinder.FindPath(eulerianity);
+
+		UpdateAgentPath(path);
 	}
 	
 
@@ -126,6 +134,10 @@ void App_GraphTheory::Render(float deltaTime) const
 void App_GraphTheory::UpdateAgentPath(const vector<Elite::GraphNode*>& trail)
 {
 	vector<Vector2> path{};
+	for (const auto& node : trail)
+	{
+		path.push_back(node->GetPosition());
+	}
 	
 	//TODO: convert GraphNode vector to positions vector
 
