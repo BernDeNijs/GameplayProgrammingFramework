@@ -9,7 +9,7 @@ struct SteeringParams //Also used as Target for SteeringBehaviors
 	Elite::Vector2 LinearVelocity;
 	float AngularVelocity;
 
-	SteeringParams(Elite::Vector2 position = Elite::ZeroVector2, float orientation = 0.f,
+	SteeringParams(Elite::Vector2 position = Elite::ZeroVector2, float orientation = 0.f, 
 		Elite::Vector2 linearVel = Elite::ZeroVector2, float angularVel = 0.f) :
 		Position(position),
 		Orientation(orientation),
@@ -25,23 +25,10 @@ struct SteeringParams //Also used as Target for SteeringBehaviors
 		Orientation = 0.f;
 		AngularVelocity = 0.f;
 	}
-
-	Elite::Vector2 GetDirection() const  //Zero Orientation > {0,-1}
-	{
-		return Elite::Vector2(cos(Orientation), sin(Orientation));
-	}
-
-	float GetOrientationFromVelocity() const
-	{
-		if (LinearVelocity.Magnitude() == 0)
-			return 0.f;
-
-		return atan2f(LinearVelocity.x, -LinearVelocity.y);
-	}
 #pragma endregion
 
 #pragma region Operator Overloads
-	SteeringParams(const SteeringParams& other)
+	SteeringParams(const SteeringParams & other)
 	{
 		Position = other.Position;
 		Orientation = other.Orientation;
@@ -69,6 +56,7 @@ struct SteeringParams //Also used as Target for SteeringBehaviors
 		return Position != other.Position || Orientation != other.Orientation || LinearVelocity != other.LinearVelocity || AngularVelocity != other.AngularVelocity;
 	}
 #pragma endregion
+
 };
 using TargetData = SteeringParams; //Alias for SteeringBehavior usage (Bit clearer in its context ;) )
 

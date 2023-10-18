@@ -27,6 +27,7 @@ namespace Elite
 		void SubmitAndFlipFrame(EImmediateUI* pImmediateUI = nullptr);
 
 	private:
+
 	};
 }
 #endif

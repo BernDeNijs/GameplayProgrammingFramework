@@ -38,8 +38,6 @@ private:
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
-	std::vector<Elite::Vector2> m_OldPositions;
-	CellSpace* m_pCellSpace;
 
 	bool m_TrimWorld = false;
 	float m_WorldSize = 0.f;
@@ -48,6 +46,7 @@ private:
 	int m_NrOfNeighbors = 0;
 
 	SteeringAgent* m_pAgentToEvade = nullptr;
+	CellSpace* m_CellSpace = nullptr;
 	
 	//Steering Behaviors
 	Separation* m_pSeparationBehavior = nullptr;
@@ -60,11 +59,13 @@ private:
 	BlendedSteering* m_pBlendedSteering = nullptr;
 	PrioritySteering* m_pPrioritySteering = nullptr;
 
+	bool m_RenderNeighborhood{ false };
+	bool m_SpatialPartitioning{ false };
+
+	std::vector<Elite::Vector2> m_pAgentsOldPos;
+
 	void RenderNeighborhood();
 	float* GetWeight(ISteeringBehavior* pBehaviour);
-
-	bool m_RenderNeighboorhood{ false };
-	bool m_SpacialPartitioning{ false };
 
 private:
 	Flock(const Flock& other);

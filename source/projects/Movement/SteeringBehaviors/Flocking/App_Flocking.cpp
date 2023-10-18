@@ -10,9 +10,8 @@ using namespace Elite;
 
 //Destructor
 App_Flocking::~App_Flocking()
-{
+{	
 	SAFE_DELETE(m_pFlock);
-	SAFE_DELETE(m_pAgentToEvade);
 }
 
 //Functions
@@ -37,6 +36,7 @@ void App_Flocking::Update(float deltaTime)
 	m_pFlock->Update(deltaTime);
 	if (m_UseMouseTarget)
 		m_pFlock->SetTarget_Seek(m_MouseTarget);
+
 }
 
 void App_Flocking::Render(float deltaTime) const
@@ -44,8 +44,7 @@ void App_Flocking::Render(float deltaTime) const
 	RenderWorldBounds(m_TrimWorldSize);
 
 	m_pFlock->Render(deltaTime);
-
 	//Render Target
-	if (m_VisualizeMouseTarget)
-		DEBUGRENDERER2D->DrawSolidCircle(m_MouseTarget.Position, 0.3f, { 0.f,0.f }, { 1.f,0.f,0.f }, -0.8f);
+	if(m_VisualizeMouseTarget)
+		DEBUGRENDERER2D->DrawSolidCircle(m_MouseTarget.Position, 0.3f, { 0.f,0.f }, { 1.f,0.f,0.f },-0.8f);
 }

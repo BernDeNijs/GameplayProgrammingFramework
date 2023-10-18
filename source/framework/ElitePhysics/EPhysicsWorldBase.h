@@ -29,9 +29,7 @@ namespace Elite
 
 		template<typename raycastbackType, typename positionType>
 		void Raycast(raycastbackType* callback, const positionType& point1, const positionType& point2)
-		{
-			m_pPhysicsWorld->RayCast(callback, point1, point2);
-		}
+		{ m_pPhysicsWorld->RayCast(callback, point1, point2); }
 
 	private:
 		//=== Datamembers ===

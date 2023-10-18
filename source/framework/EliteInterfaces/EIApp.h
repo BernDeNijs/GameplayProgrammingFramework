@@ -1,5 +1,6 @@
 #ifndef BASE_APPLICATION_H
 #define BASE_APPLICATION_H
+#include "stdafx.h"
 //-----------------------------------------------------------------
 // Application Base
 //-----------------------------------------------------------------
@@ -30,7 +31,7 @@ protected:
 
 private:
 	//C++ make the class non-copyable
-	IApp(const IApp&) {};
-	IApp& operator=(const IApp&) {};
+	IApp(const IApp&){};
+	IApp& operator=(const IApp&){};
 };
 #endif

@@ -5,19 +5,20 @@
 #include "App_CombinedSteering.h"
 #include "../SteeringAgent.h"
 #include "CombinedSteeringBehaviors.h"
-#include "projects/Movement/SteeringBehaviors/Obstacle.h"
+#include "projects\Movement\SteeringBehaviors\Obstacle.h"
 
 using namespace Elite;
 App_CombinedSteering::~App_CombinedSteering()
-{
-	SAFE_DELETE(m_pBlendedSteering)
-	SAFE_DELETE(m_pDrunkAgent)
-	SAFE_DELETE(m_pDrunkWander)
-	SAFE_DELETE(m_pEvadingAgent)
-	SAFE_DELETE(m_pEvade)
-	SAFE_DELETE(m_pPrioritySteering)
-	SAFE_DELETE(m_pSeek)
-	SAFE_DELETE(m_pWander)
+{	
+	SAFE_DELETE(m_pAgent1);
+	SAFE_DELETE(m_pDrunkSeek);
+	SAFE_DELETE(m_pDrunkWanderer);
+	SAFE_DELETE(m_pDrunkSeekBehavior);
+
+	SAFE_DELETE(m_pAgent2);
+	SAFE_DELETE(m_pAgent2Evade);
+	SAFE_DELETE(m_pAgent2Wander);
+	SAFE_DELETE(m_pAgent2Steering);
 }
 
 void App_CombinedSteering::Start()
@@ -25,35 +26,37 @@ void App_CombinedSteering::Start()
 	DEBUGRENDERER2D->GetActiveCamera()->SetZoom(55.0f);
 	DEBUGRENDERER2D->GetActiveCamera()->SetCenter(Elite::Vector2(m_TrimWorldSize / 1.5f, m_TrimWorldSize / 2));
 
-	// Drunk Agent
-	m_pSeek = new Seek();
-	m_pDrunkWander = new Wander();
-	m_pDrunkWander->SetOffset(0.f);
-	m_pBlendedSteering = new BlendedSteering({ 
-		{ m_pSeek, 0.5f }, 
-		{ m_pDrunkWander, 0.5f } });
+	//Agent 1
+	m_pDrunkWanderer = new Wander();
+	m_pDrunkSeek = new Seek();
+	m_pDrunkSeekBehavior = new BlendedSteering({
+		BlendedSteering::WeightedBehavior{m_pDrunkSeek, 0.5f},
+		BlendedSteering::WeightedBehavior{m_pDrunkWanderer, 0.5f}
+		});
 
-	m_pDrunkAgent = new SteeringAgent();
-	m_pDrunkAgent->SetSteeringBehavior(m_pBlendedSteering);
-	m_pDrunkAgent->SetMaxLinearSpeed(15.f);
-	m_pDrunkAgent->SetMass(1.f);
-	m_pDrunkAgent->SetAutoOrient(true);
-	m_pDrunkAgent->SetBodyColor({ 1,0,0 });
+	m_pAgent1 = new SteeringAgent();
+	m_pAgent1->SetSteeringBehavior(m_pDrunkSeekBehavior);
+	m_pAgent1->SetMaxLinearSpeed(15.f);
+	m_pAgent1->SetAutoOrient(true);
+	m_pAgent1->SetMass(1.f);
+	m_pAgent1->SetBodyColor({ 1.f, 0.f, 0.f });
 
-	// Evading Agent
-	m_pEvade = new Evade();
-	m_pEvade->SetEvadeRange(5.f);
-	m_pWander = new Wander();
-	m_pPrioritySteering = new PrioritySteering({ 
-		m_pEvade, 
-		m_pWander });
+	//Agent 2
+	m_pAgent2Wander = new Wander();
+	m_pAgent2Evade = new Evade();
+	m_pAgent2Evade->SetEvadingRange(20.f);
+	m_pAgent2Steering = new PrioritySteering({
+		m_pAgent2Evade,
+		m_pAgent2Wander
+		});
 
+	m_pAgent2 = new SteeringAgent();
+	m_pAgent2->SetSteeringBehavior(m_pAgent2Steering);
+	m_pAgent2->SetMaxLinearSpeed(15.f);
+	m_pAgent2->SetAutoOrient(true);
+	m_pAgent2->SetMass(1.f);
+	m_pAgent2->SetBodyColor({ 0.f, 0.f, 1.f });
 
-	m_pEvadingAgent = new SteeringAgent();
-	m_pEvadingAgent->SetSteeringBehavior(m_pPrioritySteering);
-	m_pEvadingAgent->SetMaxLinearSpeed(15.f);
-	m_pEvadingAgent->SetMass(1.f);
-	m_pEvadingAgent->SetAutoOrient(true);
 }
 
 void App_CombinedSteering::Update(float deltaTime)
@@ -65,27 +68,8 @@ void App_CombinedSteering::Update(float deltaTime)
 		m_MouseTarget.Position = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ static_cast<float>(mouseData.X), static_cast<float>(mouseData.Y) });
 	}
 
-	m_pSeek->SetTarget(m_MouseTarget);
-	m_pDrunkAgent->Update(deltaTime);
-	m_pDrunkAgent->SetRenderBehavior(m_CanDebugRender);
-
-	TargetData evadeTarget{};
-	evadeTarget.Position = m_pDrunkAgent->GetPosition();
-	evadeTarget.Orientation = m_pDrunkAgent->GetRotation();
-	evadeTarget.LinearVelocity = m_pDrunkAgent->GetLinearVelocity();
-
-	m_pEvade->SetTarget(evadeTarget);
-	m_pEvadingAgent->Update(deltaTime);
-	m_pEvadingAgent->SetRenderBehavior(m_CanDebugRender);
-
-	if (m_TrimWorld)
-	{
-		m_pDrunkAgent->TrimToWorld(m_TrimWorldSize);
-		m_pEvadingAgent->TrimToWorld(m_TrimWorldSize);
-	}
-
 #ifdef PLATFORM_WINDOWS
-#pragma region UI
+	#pragma region UI
 	//UI
 	{
 		//Setup
@@ -138,22 +122,42 @@ void App_CombinedSteering::Update(float deltaTime)
 
 		ImGui::Text("Behavior Weights");
 		ImGui::Spacing();
-
-		ImGui::SliderFloat("Seek", &m_pBlendedSteering->GetWeightedBehaviorsRef()[0].weight, 0.f, 1.f, "%.2");
-		ImGui::SliderFloat("Wander", &m_pBlendedSteering->GetWeightedBehaviorsRef()[1].weight, 0.f, 1.f, "%.2");
+		
+		ImGui::SliderFloat("Seek", &m_pDrunkSeekBehavior->GetWeightedBehaviorsRef()[0].weight, 0.f, 1.f, "%.2");
+		ImGui::SliderFloat("Wander", &m_pDrunkSeekBehavior->GetWeightedBehaviorsRef()[1].weight, 0.f, 1.f, "%.2");
 
 		//End
 		ImGui::PopAllowKeyboardFocus();
 		ImGui::End();
 	}
-#pragma endregion
+	#pragma endregion
 #endif
+
+	//Agent 1
+	m_pDrunkSeek->SetTarget(m_MouseTarget);
+	m_pAgent1->SetDebugRenderingEnabled(m_CanDebugRender);
+	m_pAgent1->Update(deltaTime);
+
+	//Agent 2
+
+	TargetData target{};
+	target.Position = m_pAgent1->GetPosition();
+	target.LinearVelocity = m_pAgent1->GetLinearVelocity();
+
+	m_pAgent2Evade->SetTarget(target);
+	m_pAgent2->SetDebugRenderingEnabled(m_CanDebugRender);
+	m_pAgent2->Update(deltaTime);
+
+	if (m_TrimWorld)
+	{
+		m_pAgent1->TrimToWorld(m_TrimWorldSize);
+		m_pAgent2->TrimToWorld(m_TrimWorldSize);
+	}
+	
 }
 
 void App_CombinedSteering::Render(float deltaTime) const
 {
-	m_pDrunkAgent->Render(deltaTime);
-	m_pEvadingAgent->Render(deltaTime);
 
 	if (m_TrimWorld)
 	{
@@ -161,6 +165,6 @@ void App_CombinedSteering::Render(float deltaTime) const
 	}
 
 	//Render Target
-	if (m_VisualizeMouseTarget)
-		DEBUGRENDERER2D->DrawSolidCircle(m_MouseTarget.Position, 0.3f, { 0.f,0.f }, { 1.f,0.f,0.f }, -0.8f);
+	if(m_VisualizeMouseTarget)
+		DEBUGRENDERER2D->DrawSolidCircle(m_MouseTarget.Position, 0.3f, { 0.f,0.f }, { 1.f,0.f,0.f },-0.8f);
 }

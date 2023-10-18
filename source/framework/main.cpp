@@ -15,14 +15,29 @@ bool gRequestShutdown = false;
 #undef main //Undefine SDL_main as main
 int main(int argc, char* argv[])
 {
-	int x{}, y{};
-	bool runExeWithCoordinates{ argc == 3 };
+	// Random seeding: uncomment following line
+	//srand(unsigned int(time(nullptr)));
 
-	if (runExeWithCoordinates)
+	int x{ -1 };
+	int y{ -1 };
+
+	if (argc > 1)
 	{
-		x = std::stoi(std::string(argv[1]));
-		y = std::stoi(std::string(argv[2]));
+		for (int argIdx = 0; argIdx < argc - 1; ++argIdx)
+		{
+			std::string argStr{ std::string(argv[argIdx]) };
+			if (argStr == "-x")
+			{
+				x = std::stoi(std::string(argv[argIdx + 1]));
+			}
+			if (argStr == "-y")
+			{
+				y = std::stoi(std::string(argv[argIdx + 1]));
+			}
+		}
 	}
+
+
 
 	try
 	{
@@ -39,7 +54,7 @@ int main(int argc, char* argv[])
 
 		pWindow->CreateEWindow(params);
 
-		if (runExeWithCoordinates)
+		if (x != -1 && y != -1)
 			pWindow->SetWindowPosition(x, y);
 
 		//Create Frame (can later be extended by creating FrameManager for MultiThreaded Rendering)
@@ -52,7 +67,7 @@ int main(int argc, char* argv[])
 		ELITE_ASSERT(pCamera, "Camera has not been created.");
 		DEBUGRENDERER2D->Initialize(pCamera);
 
-		//Create Immediate UI
+		//Create Immediate UI 
 		Elite::EImmediateUI* pImmediateUI = new Elite::EImmediateUI();
 		ELITE_ASSERT(pImmediateUI, "ImmediateUI has not been created.");
 		pImmediateUI->Initialize(pWindow->GetRawWindowHandle());
@@ -79,7 +94,7 @@ int main(int argc, char* argv[])
 			auto const elapsed = TIMER->GetElapsed();
 
 			//Window procedure first, to capture all events and input received by the window
-			if (!pImmediateUI->FocussedOnUI())
+			if (!pImmediateUI->FocusedOnUI())
 				pWindow->ProcedureEWindow();
 			else
 				pImmediateUI->EventProcessing();

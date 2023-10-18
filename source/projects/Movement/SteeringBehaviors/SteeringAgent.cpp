@@ -2,31 +2,28 @@
 #include "SteeringAgent.h"
 #include "Steering/SteeringBehaviors.h"
 
-#include <iostream>
-
 void SteeringAgent::Update(float dt)
 {
-	if (m_pSteeringBehavior)
+	if(m_pSteeringBehavior)
 	{
 		auto output = m_pSteeringBehavior->CalculateSteering(dt, this);
 
 		//Linear Movement
 		//***************
-		auto linVel{ GetLinearVelocity() };
-		auto steeringForce{ output.LinearVelocity - linVel };
-		auto acceleration{ steeringForce / GetMass() };
+		auto linVel = GetLinearVelocity();
+		auto steeringForce = output.LinearVelocity - linVel;
+		auto acceleration = steeringForce / GetMass();		
 
-		if (m_RenderBehavior)
+		if(m_RenderDebug)
 		{
-			DEBUGRENDERER2D->DrawDirection(GetPosition(), acceleration, acceleration.Magnitude(), { 0, 1, 1, 0.5f }, 0.40f);
-			DEBUGRENDERER2D->DrawDirection(GetPosition(), linVel + acceleration, (linVel + acceleration).Magnitude(), { 0, 1, 0, 0.5f }, 0.40f);
-			DEBUGRENDERER2D->DrawDirection(GetPosition(), linVel, linVel.Magnitude(), { 1, 0, 1, 0.5f }, 0.40f);
+			DEBUGRENDERER2D->DrawDirection(GetPosition(), acceleration, acceleration.Magnitude(), { 0, 1, 1 ,0.5f }, 0.40f);
+			DEBUGRENDERER2D->DrawDirection(GetPosition(), linVel, linVel.Magnitude(), { 1, 0, 1 ,0.5f }, 0.40f);
 		}
-		SetLinearVelocity(linVel + (acceleration * dt));
+		SetLinearVelocity(linVel + (acceleration*dt));
 
 		//Angular Movement
 		//****************
-		if (m_AutoOrient)
+		if(m_AutoOrient)
 		{
 			auto desiredOrientation = Elite::VectorToOrientation(GetLinearVelocity());
 			SetRotation(desiredOrientation);

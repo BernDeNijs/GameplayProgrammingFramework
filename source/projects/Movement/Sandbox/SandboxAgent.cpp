@@ -3,23 +3,24 @@
 
 using namespace Elite;
 
-SandboxAgent::SandboxAgent() : BaseAgent()
+SandboxAgent::SandboxAgent(): BaseAgent()
 {
 	m_Target = GetPosition();
 }
 
 void SandboxAgent::Update(float dt)
 {
-	constexpr float speed = 1000.f;
+	const float speed{1000.f};
 
+	//TODO: set linear velocity towards m_Target
+	Vector2 pos = GetPosition();
+	Vector2 dir = m_Target - pos;
+	Vector2 vel = dir.GetNormalized() * speed * dt;
 
-	const auto pos = GetPosition();
-	const auto dir = m_Target - pos;
-	const auto velocity = dir.GetNormalized() * speed * dt;
+	SetLinearVelocity(dir.GetNormalized() * speed * dt);
 
-	SetLinearVelocity(velocity);
+	DEBUGRENDERER2D->DrawSegment(pos, pos+vel, { 1.f,0.f,0.f });
 
-	DEBUGRENDERER2D->DrawSegment(pos, pos+(dir.GetNormalized()*5.f), Color{0.f,1.f,0.f});
 	//Orientation
 	AutoOrient();
 }
@@ -33,9 +34,8 @@ void SandboxAgent::AutoOrient()
 {
 	//Determine angle based on direction
 	Vector2 velocity = GetLinearVelocity();
-	if (velocity.Magnitude() > 0)
+	if (velocity.MagnitudeSquared() > 0)
 	{
-		
 		SetRotation(VectorToOrientation(velocity));
 	}
 }

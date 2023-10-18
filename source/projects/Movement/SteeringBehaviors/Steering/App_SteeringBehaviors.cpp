@@ -77,11 +77,14 @@ App_SteeringBehaviors::ImGui_Agent App_SteeringBehaviors::AddAgent(BehaviorTypes
 //Functions
 void App_SteeringBehaviors::Start()
 {
-	DEBUGRENDERER2D->GetActiveCamera()->SetZoom(55.0f);
-	DEBUGRENDERER2D->GetActiveCamera()->SetCenter(Elite::Vector2(m_TrimWorldSize / 1.5f, m_TrimWorldSize / 2));
+	//AddObstacle();
+	//AddObstacle();
+	//AddObstacle();
+	//AddObstacle();
 
 	AddAgent(BehaviorTypes::Seek, -1);
-	m_AgentVec[0].pAgent->SetRenderBehavior(true);
+	m_AgentVec[0].pAgent->SetDebugRenderingEnabled(true);
+
 
 	std::stringstream ss;
 	m_TargetLabelsVec.push_back("Mouse");
@@ -195,6 +198,7 @@ void App_SteeringBehaviors::Update(float deltaTime)
 						a.pAgent->SetMass(v);
 				}
 
+
 				bool behaviourModified = false;
 
 				ImGui::Spacing();
@@ -204,10 +208,12 @@ void App_SteeringBehaviors::Update(float deltaTime)
 				ImGui::Text(" Behavior: ");
 				ImGui::SameLine();
 				ImGui::PushItemWidth(100);
-				if (ImGui::Combo("", &a.SelectedBehavior, "Align\0Arrive\0AvoidObstacle\0Evade\0Face\0FacedArrive\0Flee\0Hide\0Pursuit\0Seek\0Wander\0", 4))
+				//TODO: ADD Extra steering behaviors here, separated by "\0". Order must be the same as in the BehaviorTypes enum.
+				if (ImGui::Combo("", &a.SelectedBehavior, "Seek\0Wander\0Flee\0Arrive\0Face\0Evade\0Pursuit\0Hide\0AvoidObstacle\0Wander", 4))
 				{
 					behaviourModified = true;
 				}
+
 				ImGui::PopItemWidth();
 				ImGui::PopID();
 
@@ -233,26 +239,28 @@ void App_SteeringBehaviors::Update(float deltaTime)
 					a.SelectedTarget = selectedTargetOffset - 1;
 					behaviourModified = true;
 				}
-					ImGui::PopItemWidth();
-					ImGui::PopID();
-					ImGui::Spacing();
-					ImGui::Spacing();
+				ImGui::PopItemWidth();
+				ImGui::PopID();
+				ImGui::Spacing();
+				ImGui::Spacing();
 
-					if (behaviourModified)
-						SetAgentBehavior(a);
+				if (behaviourModified)
+					SetAgentBehavior(a);
 
-					if (ImGui::Button("x"))
-					{
-						m_AgentToRemove = i;
-					}
+				if (ImGui::Button("x"))
+				{
+					m_AgentToRemove = i;
+				}
 
-					ImGui::SameLine(0, 20);
+				ImGui::SameLine(0, 20);
 
-					bool isChecked = a.pAgent->CanRenderBehavior();
-					ImGui::Checkbox("Render Debug", &isChecked);
-					a.pAgent->SetRenderBehavior(isChecked);
+				bool isChecked = a.pAgent->GetDebugRenderingEnabled();
+				if (ImGui::Checkbox("Debug Rendering", &isChecked))
+				{
+					a.pAgent->SetDebugRenderingEnabled(isChecked);
+				}
 
-					ImGui::Unindent();
+				ImGui::Unindent();
 			}
 
 			ImGui::PopID();
@@ -283,6 +291,11 @@ void App_SteeringBehaviors::Update(float deltaTime)
 			UpdateTarget(a);
 		}
 	}
+
+	auto rot = m_AgentVec[0].pAgent->GetRotation();
+	auto p1 = Vector2{ 0,0 };
+	auto p2 = Vector2{ cos(rot), sin(rot) };
+	DEBUGRENDERER2D->DrawSegment(p1, p2, { 1,0,0 });
 }
 
 void App_SteeringBehaviors::Render(float deltaTime) const
@@ -313,6 +326,7 @@ void App_SteeringBehaviors::SetAgentBehavior(ImGui_Agent& a)
 
 	switch (BehaviorTypes(a.SelectedBehavior))
 	{
+	default:
 	case BehaviorTypes::Seek:
 		a.pBehavior = new Seek();
 		break;
@@ -325,15 +339,23 @@ void App_SteeringBehaviors::SetAgentBehavior(ImGui_Agent& a)
 	case BehaviorTypes::Face:
 		a.pBehavior = new Face();
 		break;
-	case BehaviorTypes::Wander:
-		a.pBehavior = new Wander();
+	case BehaviorTypes::Evade:
+		a.pBehavior = new Evade();
 		break;
 	case BehaviorTypes::Pursuit:
 		a.pBehavior = new Pursuit();
 		break;
-	case BehaviorTypes::Evade:
-		a.pBehavior = new Evade();
-		break;
+	/*case BehaviorTypes::Hide:
+		a.pBehavior = new Hide();
+		break;*/
+	/*case BehaviorTypes::AvoidObstacle:
+		a.pBehavior = new AvoidObstacle(m_Obstacles);
+		break;*/
+		/*case BehaviorTypes::Wander:
+		a.pBehavior = new Wander();
+		break;*/
+	//TODO: handle other steering behaviours here
+
 	}
 
 	UpdateTarget(a);
@@ -344,6 +366,7 @@ void App_SteeringBehaviors::SetAgentBehavior(ImGui_Agent& a)
 
 void App_SteeringBehaviors::UpdateTarget(ImGui_Agent& a)
 {
+
 	bool useMouseAsTarget = a.SelectedTarget < 0;
 	if (useMouseAsTarget)
 		a.pBehavior->SetTarget(m_Target);

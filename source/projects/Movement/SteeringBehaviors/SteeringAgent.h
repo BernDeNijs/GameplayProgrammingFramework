@@ -40,8 +40,8 @@ public:
 	virtual void SetSteeringBehavior(ISteeringBehavior* pBehavior) { m_pSteeringBehavior = pBehavior; }
 	ISteeringBehavior* GetSteeringBehavior() const { return m_pSteeringBehavior; }
 
-	void SetRenderBehavior(bool isEnabled) { m_RenderBehavior = isEnabled; }
-	bool CanRenderBehavior() const { return m_RenderBehavior; }
+	void SetDebugRenderingEnabled(bool isEnabled) { m_RenderDebug = isEnabled; }
+	bool GetDebugRenderingEnabled() const { return m_RenderDebug; }
 
 protected:
 	//--- Datamembers ---
@@ -50,6 +50,6 @@ protected:
 	float m_MaxLinearSpeed = 10.f;
 	float m_MaxAngularSpeed = 10.f;
 	bool m_AutoOrient = false;
-	bool m_RenderBehavior = false;
+	bool m_RenderDebug = false;
 };
 #endif

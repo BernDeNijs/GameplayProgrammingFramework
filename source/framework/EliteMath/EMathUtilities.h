@@ -11,7 +11,8 @@
 #include <cfloat>
 #include <type_traits>
 
-namespace Elite {
+namespace Elite
+{
 	/* --- CONSTANTS --- */
 #define E_PI	3.14159265358979323846
 #define E_PI_2	1.57079632679489661923
@@ -94,6 +95,10 @@ namespace Elite {
 	/*! Random Integer */
 	inline int randomInt(int max = 1)
 	{
+		if (max == 0)
+		{
+			return max;
+		}
 		return rand() % max;
 	}
 

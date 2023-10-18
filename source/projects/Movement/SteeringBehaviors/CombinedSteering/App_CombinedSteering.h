@@ -1,5 +1,4 @@
-#ifndef STEERINGBEHAVIORS_APPLICATION_H
-#define STEERINGBEHAVIORS_APPLICATION_H
+#pragma once
 //-----------------------------------------------------------------
 // Includes & Forward Declarations
 //-----------------------------------------------------------------
@@ -33,20 +32,17 @@ private:
 
 	bool m_CanDebugRender = false;
 	bool m_TrimWorld = true;
-	float m_TrimWorldSize = 25.f;
+	float m_TrimWorldSize = 50.f;
 
-	// Agents
-	SteeringAgent* m_pDrunkAgent{ nullptr }; // Seek Wander
-	SteeringAgent* m_pEvadingAgent{ nullptr }; // Evade Wander
+	//Agent 1: Drunk Seek
+	SteeringAgent* m_pAgent1{nullptr};
+	BlendedSteering* m_pDrunkSeekBehavior{ nullptr };
+	Wander* m_pDrunkWanderer{ nullptr };
+	Seek* m_pDrunkSeek{ nullptr };
 
-	// Blended Steering
-	BlendedSteering* m_pBlendedSteering{ nullptr };
-	Seek* m_pSeek{ nullptr };
-	Wander* m_pDrunkWander{ nullptr };
-
-	// Priority steering
-	PrioritySteering* m_pPrioritySteering{ nullptr };
-	Evade* m_pEvade{ nullptr };
-	Wander* m_pWander{ nullptr };
+	//Agent2: Wander & Evade
+	SteeringAgent* m_pAgent2{ nullptr };
+	PrioritySteering* m_pAgent2Steering{ nullptr };
+	Wander* m_pAgent2Wander{ nullptr };
+	Evade* m_pAgent2Evade{ nullptr };
 };
-#endif

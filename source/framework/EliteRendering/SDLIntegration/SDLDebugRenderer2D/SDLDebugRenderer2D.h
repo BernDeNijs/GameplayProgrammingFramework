@@ -43,8 +43,9 @@ namespace Elite
 		void DrawDirection(const Elite::Vector2& p, const Elite::Vector2& dir, float length, const Color& color, float depth = 0.9f);
 		void DrawTransform(const Elite::Vector2& p, const Elite::Vector2& xAxis, const Elite::Vector2& yAxis, float depth);
 		void DrawPoint(const Elite::Vector2& p, float size, const Color& color, float depth = 0.9f);
-		void DrawString(int x, int y, const char* string, ...) const;
-		void DrawString(const Elite::Vector2& pw, const char* string, ...) const;
+		void DrawString(float worldPos_x, float worldPos_y, const char* string, ...) const;
+		void DrawString(const Elite::Vector2& worldPos, const char* string, ...) const;
+		void DrawString_ScreenSpace(const Elite::Vector2& screenPos, const char* string, ...) const;
 
 		inline float NextDepthSlice();
 
@@ -59,8 +60,11 @@ namespace Elite
 		unsigned int m_vaoId = 0;
 		unsigned int m_bufferIDs[1] = {};
 
+
 		//Functions
 		void Shutdown();
+		void DrawString_args(float screenPos_x, float screenPos_y, const char* string, const va_list& args) const;
+
 	};
 }
 #endif

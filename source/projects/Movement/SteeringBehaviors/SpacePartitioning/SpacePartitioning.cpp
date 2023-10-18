@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SpacePartitioning.h"
 #include "projects\Movement\SteeringBehaviors\SteeringAgent.h"
-#include <algorithm>
 
 // --- Cell ---
 // ------------
@@ -45,15 +44,17 @@ CellSpace::CellSpace(float width, float height, int rows, int cols, int maxEntit
 	m_CellHeight = height / rows;
 
 	//TODO: create the cells
-	m_Cells.reserve(m_NrOfRows * m_NrOfCols);
-	for (size_t i = 0; i < m_NrOfRows * m_NrOfCols; i++)
+	int totalCells{ m_NrOfRows * m_NrOfCols };
+	m_Cells.reserve(totalCells);
+	for(int index{}; index < totalCells; ++index)
 	{
-		m_Cells.emplace_back(Cell(static_cast<float>(i % m_NrOfCols) * m_CellWidth,static_cast<float>(i/ m_NrOfRows) * m_CellHeight,m_CellWidth,m_CellHeight));
+		m_Cells.emplace_back(static_cast<float>(index % m_NrOfCols) * m_CellWidth, static_cast<float>(index / m_NrOfRows) * m_CellHeight, m_CellWidth, m_CellHeight);
 	}
 }
 
 void CellSpace::AddAgent(SteeringAgent* agent)
 {
+	//Add the agent to the correct cell
 	m_Cells[PositionToIndex(agent->GetPosition())].agents.push_back(agent);
 }
 
@@ -61,55 +62,43 @@ void CellSpace::AgentPositionChanged(SteeringAgent* agent, Elite::Vector2 oldPos
 {
 	// TODO: Check if the agent needs to be moved to another cell.
 	// Use the calculated index for oldPos and currentPos for this
-	int oldIdx = PositionToIndex(oldPos);
-	int newIdx = PositionToIndex(agent->GetPosition());
-	if (oldIdx == newIdx) return;
+	int oldIndex = PositionToIndex(oldPos);
+	int newIndex{ PositionToIndex(agent->GetPosition()) };
 
-	m_Cells[oldIdx].agents.remove(agent);
-	m_Cells[newIdx].agents.push_back(agent);
-	//AddAgent(agent);
-	
-	
+	if(oldIndex == newIndex)
+	{
+		return;
+	}
 
+	m_Cells[oldIndex].agents.remove(agent);
+	AddAgent(agent);
 }
 
 void CellSpace::RegisterNeighbors(SteeringAgent* pAgent, float neighborhoodRadius)
 {
 	//TODO: Register the neighbors for the provided agent
 	//Only check the cells that are within the radius of the neighborhood
-
 	m_NrOfNeighbors = 0;
 
-	const auto agentPos = pAgent->GetPosition();
-	Elite::Rect agentRect;
-	agentRect.bottomLeft = Elite::Vector2{ agentPos.x - neighborhoodRadius/2.f ,agentPos.y - neighborhoodRadius/2.f };
-	agentRect.height = neighborhoodRadius;
-	agentRect.width = neighborhoodRadius;
-
-
-
-	for (size_t i = 0; i < m_Cells.size(); i++)
+	Elite::Rect agentRect{Elite::Vector2{pAgent->GetPosition().x - (neighborhoodRadius), pAgent->GetPosition().y - neighborhoodRadius},neighborhoodRadius*2,neighborhoodRadius*2 };
+	m_AgentRect = agentRect;
+	for(int index{}; index < m_Cells.size(); ++index)
 	{
-		if (Elite::IsOverlapping(agentRect,m_Cells[i].boundingBox))
+		if(Elite::IsOverlapping(m_AgentRect, m_Cells[index].boundingBox))
 		{
-			/*DEBUGRENDERER2D->DrawCircle(m_Cells[i].boundingBox.bottomLeft, m_CellWidth/2.f ,{ 1.f,0.f,0.f }, DEBUGRENDERER2D->NextDepthSlice());*/
-
-			for (const auto& agent : m_Cells[i].agents)
+			for(const auto& agent : m_Cells[index].agents)
 			{
 				if (&agent == &pAgent) continue;
-				const float distanceSquared = pAgent->GetPosition().DistanceSquared(agent->GetPosition());
-
-				if (distanceSquared <= neighborhoodRadius * neighborhoodRadius)
+				const auto distanceSqrt = pAgent->GetPosition().DistanceSquared(agent->GetPosition());
+				if (distanceSqrt < neighborhoodRadius * neighborhoodRadius)
 				{
 					m_Neighbors[m_NrOfNeighbors] = agent;
 					++m_NrOfNeighbors;
 				}
 			}
-
 		}
 	}
-
-
+	
 }
 
 void CellSpace::EmptyCells()
@@ -121,24 +110,51 @@ void CellSpace::EmptyCells()
 void CellSpace::RenderCells() const
 {
 	//TODO: Render the cells with the number of agents inside of it
-	//TIP: use DEBUGRENDERER2D->DrawPolygon(...) and Cell::GetRectPoints())
-	//TIP: use DEBUGRENDERER2D->DrawString(...) 
-	for (int i = 0; i < m_Cells.size(); i++)
+	std::vector<Elite::Vector2> rectPoints{};
+
+	for(int index{}; index < static_cast<int>(m_Cells.size()); ++index)
 	{
-		std::vector<Elite::Vector2> rectPoints = m_Cells[i].GetRectPoints();
-		DEBUGRENDERER2D->DrawPolygon(&rectPoints[0], 4, Elite::Color(1.f, 1.f, 1.f), DEBUGRENDERER2D->NextDepthSlice());
-		DEBUGRENDERER2D->DrawString(m_Cells[i].boundingBox.bottomLeft + Elite::Vector2{0.f,m_CellHeight}, std::to_string(static_cast<int>(m_Cells[i].agents.size())).c_str());
-	}
-	
-	for (int i = 0; i < m_NrOfNeighbors; i++)
-	{
-		DEBUGRENDERER2D->DrawCircle(m_Neighbors[i]->GetPosition(), m_Neighbors[i]->GetRadius(), { 0.f,0.f,1.f }, DEBUGRENDERER2D->NextDepthSlice());
+		rectPoints = m_Cells[index].GetRectPoints();
+		DEBUGRENDERER2D->DrawPolygon(&rectPoints[0], 4, {0.5f, 0.f, 0.f, 1.f}, 0.4f);
+		int nrAgents{ static_cast<int>(m_Cells[index].agents.size()) };
+		Elite::Vector2 pos{ m_Cells[index].boundingBox.bottomLeft.x, m_Cells[index].boundingBox.bottomLeft.y + m_CellHeight };
+		DEBUGRENDERER2D->DrawString(pos, std::to_string(nrAgents).c_str());
 	}
 
-	
+	for(int index{}; index < m_NrOfNeighbors; ++index)
+	{
+		DEBUGRENDERER2D->DrawCircle(
+			m_Neighbors[index]->GetPosition(),
+			m_Neighbors[index]->GetRadius() + 1,
+			Elite::Color{ 0,0,255 },
+			DEBUGRENDERER2D->NextDepthSlice());
+	}
+
+	rectPoints[0] = { m_AgentRect.bottomLeft };
+	rectPoints[1] = { m_AgentRect.bottomLeft };
+	rectPoints[2] = { m_AgentRect.bottomLeft };
+	rectPoints[3] = { m_AgentRect.bottomLeft };
+	rectPoints[1] += { m_AgentRect.width, 0};
+	rectPoints[3] += { 0, m_AgentRect.height};
+	rectPoints[2] += { m_AgentRect.width, m_AgentRect.height};
+
+	DEBUGRENDERER2D->DrawPolygon(&rectPoints[0], 4, { 1.f,0.2f,1.f }, DEBUGRENDERER2D->NextDepthSlice());
+
 }
 
 int CellSpace::PositionToIndex(const Elite::Vector2 pos) const
 {
-	return  ( static_cast<int>(pos.y / m_CellHeight) * m_NrOfCols + static_cast<int>(pos.x / m_CellWidth));
+	//TODO: Calculate the index of the cell based on the position
+	int index = (static_cast<int>(pos.y / m_CellHeight) * m_NrOfCols) + static_cast<int>(pos.x / m_CellWidth);
+
+	while(index < 0)
+	{
+		index += m_NrOfCols;
+	}
+	while(index >= m_NrOfRows * m_NrOfCols)
+	{
+		index -= m_NrOfCols;
+	}
+
+	return index;
 }

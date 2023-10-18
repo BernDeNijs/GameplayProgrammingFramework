@@ -18,7 +18,7 @@ private:
 
 //SEPARATION - FLOCKING
 //*********************
-class Separation : public Seek
+class Separation : public ISteeringBehavior
 {
 public:
 	Separation(Flock* pFlock) :m_pFlock(pFlock) {}
@@ -30,9 +30,10 @@ private:
 	Flock* m_pFlock = nullptr;
 };
 
+
 //VELOCITY MATCH - FLOCKING
 //************************
-class VelocityMatch : public Seek
+class VelocityMatch : public ISteeringBehavior
 {
 public:
 	VelocityMatch(Flock* pFlock) :m_pFlock(pFlock) {}

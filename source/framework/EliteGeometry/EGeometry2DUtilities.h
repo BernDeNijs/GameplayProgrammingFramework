@@ -7,7 +7,7 @@
 #ifndef ELITE_GEOMETRY_2D_UTILITIES
 #define ELITE_GEOMETRY_2D_UTILITIES
 
-namespace Elite
+namespace Elite 
 {
 	/* --- TYPES --- */
 	enum Winding //OUTER shapes should always be given CCW, INNER shapes as CW
@@ -30,19 +30,40 @@ namespace Elite
 		//	| \		|		 | \	 |			 | \	 |
 		//	|  \	|		 |  \	 |			 |  \	 |
 		//	|	\	|		 |	 \	 |			 |	 \	 |
-		//	|	 \	| 		 |	  \	 | 			 |	  \	 |
+		//	|	 \	| 		 |	  \	 | 			 |	  \	 | 
 		//	|	  \	|		 |	   \ |			 |	   \ |
 		//	2-------1		 1-------2			 3-------2
 		//	   ??				CCW				    CW
 
-		auto signArea = 0;
-		for (auto it = shape.begin(); it != shape.end(); ++it)
+		//polygon angles should add up to 360 degrees (2 PI)
+
+		float sumAngle{ 0.f };
+
+		Elite::Vector2 firstSegment{};
+		Elite::Vector2 prevSegment{};
+		Elite::Vector2 currSegment{};
+		auto it = shape.begin();
+		auto next = std::next(it);
+		
+		firstSegment = prevSegment = Elite::Vector2{ next->x - it->x, next->y - it->y };
+
+		while ( next != shape.end())
 		{
-			auto next = std::next(it);
+			it = next;
+			next = std::next(it);
 			if (next != shape.end())
-				signArea += static_cast<int>((next->x - it->x) * (next->y + it->y));
+			{
+				currSegment = Elite::Vector2{ next->x - it->x, next->y - it->y };
+			}
+			else
+			{
+				currSegment = firstSegment;
+			}
+			
+			sumAngle += Elite::AngleBetween(currSegment, -prevSegment);
+			prevSegment = currSegment;
 		}
-		if (signArea >= 0)
+		if (sumAngle <= 0)
 			return CW;
 		return CCW;
 	}
@@ -56,7 +77,7 @@ namespace Elite
 		//    /  \
 		//   /    \
 		// prev   next
-		const auto d = (tip.x - prev.x) * (next.y - prev.y) - (tip.y - prev.y) * (next.x - prev.x);
+		const auto d = (tip.x - prev.x)*(next.y - prev.y) - (tip.y - prev.y)*(next.x - prev.x);
 		return d > 0;
 	}
 	/*! Check if a single point is inside the triangle's bounding box. This is a quick overlap test. */
@@ -73,7 +94,7 @@ namespace Elite
 	{
 		//http://totologic.blogspot.be/2014/01/accurate-point-in-triangle-test.html
 		auto p1p2_squareDistance = DistanceSquared(p1, p2);
-		auto dp = ((point.x - p1.x) * (p2.x - p1.x) + (point.y - p1.y) * (p2.y - p1.y)) / p1p2_squareDistance;
+		auto dp = ((point.x - p1.x)*(p2.x - p1.x) + (point.y - p1.y)*(p2.y - p1.y)) / p1p2_squareDistance;
 		if (dp < 0)
 			return DistanceSquared(p1, point);
 		if (dp <= 1)
@@ -83,7 +104,15 @@ namespace Elite
 		}
 		return DistanceSquared(p2, point);
 	}
-	/*! Check if a single point is inside the triangle. This is a more accurate overlap test, first using the quick PointInTriangleBoundingBox test. */
+	/*! Check if a single point is inside the triangle - Barycentric Technique*/
+	constexpr bool IsPointInTriangle(const Vector2& point, const Vector2& tri1, const Vector2& tri2, const Vector2& tri3)
+	{
+		float denominator = ((tri2.y - tri3.y) * (tri1.x - tri3.x) + (tri3.x - tri2.x) * (tri1.y - tri3.y));
+		float a = ((tri2.y - tri3.y) * (point.x - tri3.x) + (tri3.x - tri2.x) * (point.y - tri3.y)) / denominator;
+		float b = ((tri3.y - tri1.y) * (point.x - tri3.x) + (tri1.x - tri3.x) * (point.y - tri3.y)) / denominator;
+		float c = 1 - a - b;
+		return 0 <= a && a <= 1 && 0 <= b && b <= 1 && 0 <= c && c <= 1;
+	};
 	constexpr auto PointInTriangle(const Vector2& point, const Vector2& tip, const Vector2& prev, const Vector2& next, bool onLineAllowed = false)
 	{
 		//Do bounding box test first

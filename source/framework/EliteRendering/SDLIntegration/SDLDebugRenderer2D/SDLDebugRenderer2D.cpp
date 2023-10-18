@@ -25,7 +25,7 @@ void SDLDebugRenderer2D::Initialize(Camera2D* pActiveCamera)
 	m_programID = DEBUGRENDERER2D->LoadShadersToProgramFromEmbeddedSource(DefaultVertexShaderSource, DefaultFragmentShaderSource);
 	/*m_programID = LoadShadersToProgram("../data/shaders/DefaultVertexShader.vertexshader",
 		"../data/shaders/DefaultFragmentShader.fragmentshader");*/
-		//Get uniform shader attributes
+	//Get uniform shader attributes
 	m_projectionUniform = glGetUniformLocation(m_programID, "projectionMatrix");
 
 	//Generate buffers and Link attributes
@@ -94,7 +94,7 @@ void SDLDebugRenderer2D::Render()
 		glDrawArrays(GL_TRIANGLES, 0, size);
 		glDisable(GL_BLEND);
 	}
-
+	
 	//Copy Data and Draw Point
 	size = m_vPoints.size();
 	if (size > 0)
@@ -207,7 +207,7 @@ void SDLDebugRenderer2D::DrawSolidPolygon(Elite::Polygon* polygon, const Color& 
 		triangles = polygon->GetTriangles();
 
 	//Duplicate code because of possible triangulation with children -> cannot call DrawSolidPolygon directly (like Box2D)
-	//Else we would have "double triangulation"!!
+	//Else we would have "double triangulation"!! 
 	for (auto i = 0; i < static_cast<int>(triangles.size()); ++i)
 	{
 		m_vTriangles.push_back(Vertex(triangles[i]->p1, depth, fillColor));
@@ -391,7 +391,7 @@ void SDLDebugRenderer2D::DrawSegment(const Elite::Vector2& p1, const Elite::Vect
 
 void SDLDebugRenderer2D::DrawDirection(const Elite::Vector2& p, const Elite::Vector2& dir, float length, const Color& color, float depth)
 {
-	DrawSegment(p, p + (dir.GetNormalized() * length), color, depth);
+	DrawSegment(p, p + (dir.GetNormalized()*length), color, depth);
 }
 
 void SDLDebugRenderer2D::DrawTransform(const Elite::Vector2& p, const Elite::Vector2& xAxis, const Elite::Vector2& yAxis, float depth)
@@ -410,57 +410,65 @@ void SDLDebugRenderer2D::DrawTransform(const Elite::Vector2& p, const Elite::Vec
 	m_vLines.push_back(Vertex(p2, depth, green));
 }
 
+
 void SDLDebugRenderer2D::DrawPoint(const Elite::Vector2& p, float size, const Color& color, float depth)
 {
 	m_vPoints.push_back(Vertex(p, depth, color, size));
 }
 
-void SDLDebugRenderer2D::DrawString(int x, int y, const char* string, ...) const
+void SDLDebugRenderer2D::DrawString(float worldPos_x, float worldPos_y, const char* string, ...) const
 {
-	//TODO: ADD CLEAN TEXRENDERING
+	auto screenPos = m_pActiveCamera->ConvertWorldToScreen({ worldPos_x	, worldPos_y });
+
 	va_list arg;
 	va_start(arg, string);
 
-	auto& style = ImGui::GetStyle();
-	auto colorWindowBg = style.Colors[ImGuiCol_WindowBg];
-	const auto initialAlpha = colorWindowBg.w;
-	colorWindowBg.w = 0.0f;
-	style.Colors[ImGuiCol_WindowBg] = colorWindowBg;
+	DrawString_args(screenPos.x, screenPos.y, string, arg);
 
-	ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar
-		| ImGuiWindowFlags_NoSavedSettings);
-	ImGui::SetCursorPos(ImVec2(float(x), float(y)));
-	ImGui::TextColoredV(ImColor(230, 153, 153, 255), string, arg);
-	ImGui::End();
 	va_end(arg);
-
-	//Reset alpha
-	colorWindowBg.w = initialAlpha;
-	style.Colors[ImGuiCol_WindowBg] = colorWindowBg;
 }
 
-void SDLDebugRenderer2D::DrawString(const Elite::Vector2& pw, const char* string, ...) const
+void SDLDebugRenderer2D::DrawString(const Elite::Vector2& worldPos, const char* string, ...) const
 {
-	//TODO: ADD CLEAN TEXRENDERING
+	
 	if (!m_pActiveCamera)
 		return;
 
-	auto ps = m_pActiveCamera->ConvertWorldToScreen(pw);
+	auto screenPos = m_pActiveCamera->ConvertWorldToScreen(worldPos);
 
+	va_list arg;
+	va_start(arg, string);
+
+	DrawString_args(screenPos.x, screenPos.y, string, arg);
+
+	va_end(arg);
+}
+
+void SDLDebugRenderer2D::DrawString_ScreenSpace(const Elite::Vector2& screenPos, const char* string, ...) const
+{
+	va_list arg;
+	va_start(arg, string);
+
+	DrawString_args(screenPos.x, screenPos.y, string, arg);
+
+	va_end(arg);
+}
+
+void SDLDebugRenderer2D::DrawString_args(float screenPos_x, float screenPos_y, const char* string, const va_list& args) const
+{
+	//TODO: ADD CLEAN TEXRENDERING
 	auto& style = ImGui::GetStyle();
 	auto colorWindowBg = style.Colors[ImGuiCol_WindowBg];
 	const auto initialAlpha = colorWindowBg.w;
 	colorWindowBg.w = 0.0f;
 	style.Colors[ImGuiCol_WindowBg] = colorWindowBg;
 
-	va_list arg;
-	va_start(arg, string);
+
 	ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar
 		| ImGuiWindowFlags_NoSavedSettings);
-	ImGui::SetCursorPos(ImVec2(float(ps.x), float(ps.y)));
-	ImGui::TextColoredV(ImColor(230, 153, 153, 255), string, arg);
+	ImGui::SetCursorPos(ImVec2(screenPos_x,screenPos_y));
+	ImGui::TextColoredV(ImColor(230, 153, 153, 255), string, args);
 	ImGui::End();
-	va_end(arg);
 
 	//Reset alpha
 	colorWindowBg.w = initialAlpha;

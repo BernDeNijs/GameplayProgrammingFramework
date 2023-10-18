@@ -2,7 +2,7 @@
 #define SANDBOX_AGENT_H
 #include "projects/Shared/BaseAgent.h"
 
-class SandboxAgent :public BaseAgent
+class SandboxAgent:public BaseAgent
 {
 public:
 	SandboxAgent();

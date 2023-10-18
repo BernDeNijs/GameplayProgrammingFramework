@@ -1,16 +1,17 @@
 /*=============================================================================*/
-// Copyright 2021-2022 Elite Engine
+// Copyright 2023-2024 Elite Engine
 // Authors: Matthieu Delaere, Thomas Goussaert
 /*=============================================================================*/
 // SteeringBehaviors.h: SteeringBehaviors interface and different implementations
 /*=============================================================================*/
-#ifndef ELITE_STEERINGBEHAVIORS
-#define ELITE_STEERINGBEHAVIORS
+#pragma once
 
 //-----------------------------------------------------------------
 // Includes & Forward Declarations
 //-----------------------------------------------------------------
 #include "../SteeringHelpers.h"
+#include <vector>
+
 class SteeringAgent;
 class Obstacle;
 
@@ -28,9 +29,7 @@ public:
 
 	template<class T, typename std::enable_if<std::is_base_of<ISteeringBehavior, T>::value>::type* = nullptr>
 	T* As()
-	{
-		return static_cast<T*>(this);
-	}
+	{ return static_cast<T*>(this); }
 
 protected:
 	TargetData m_Target;
@@ -46,39 +45,40 @@ public:
 	Seek() = default;
 	virtual ~Seek() = default;
 
-	//Seek Behavior
+	//Seek Behaviour
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
-	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent,TargetData altTarget);
+	static SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent, const TargetData& altTarget);
 };
 
 ///////////////////////////////////////
 //FLEE
 //****
-class Flee : public Seek
+class Flee : public ISteeringBehavior
 {
 public:
 	Flee() = default;
 	virtual ~Flee() = default;
 
-	//Flee Behavior
+	//Seek Behaviour
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
 };
 
 ///////////////////////////////////////
 //ARRIVE
 //****
-class Arrive : public Seek
+class Arrive : public ISteeringBehavior
 {
 public:
 	Arrive() = default;
 	virtual ~Arrive() = default;
 
-	//Arrive Behavior
+	//Seek Behaviour
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
-	
+	void SetTargetRadius(float radius) { m_TargetRadius = radius; m_SlowRadius = 5.f * radius; }
+
 private:
-	const float m_InnerRadius{ 3.f };
-	const float m_Outer{ 14.5f };
+	float m_SlowRadius{ 15.f };
+	float m_TargetRadius{ 5.f };
 };
 
 ///////////////////////////////////////
@@ -90,9 +90,71 @@ public:
 	Face() = default;
 	virtual ~Face() = default;
 
-	//Face Behavior
+	//Seek Behaviour
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
 };
+
+///////////////////////////////////////
+//PURSUIT
+//****
+class Pursuit : public ISteeringBehavior
+{
+public:
+	Pursuit() = default;
+	virtual ~Pursuit() = default;
+
+	//Seek Behaviour
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+///////////////////////////////////////
+//EVADE
+//****
+class Evade : public Pursuit
+{
+public:
+	Evade() = default;
+	virtual ~Evade() = default;
+	void SetEvadingRange(const float& range) { m_EvadeRange = range; }
+
+	//Seek Behaviour
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+
+private:
+	float m_EvadeRange{-1};
+};
+
+///////////////////////////////////////
+//HIDE
+//****
+//class Hide : public ISteeringBehavior
+//{
+//public:
+//	Hide(std::vector<Obstacle*> obstacles);
+//	virtual ~Hide() = default;
+//
+//	//Seek Behaviour
+//	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+//
+//private:
+//	std::vector<Obstacle*> m_Obstacles;
+//};
+
+///////////////////////////////////////
+//AVOIDOBSTACLE
+//****
+//class AvoidObstacle : public ISteeringBehavior
+//{
+//public:
+//	AvoidObstacle(std::vector<Obstacle*> obstacles);
+//	virtual ~AvoidObstacle() = default;
+//
+//	//Seek Behaviour
+//	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+//
+//private:
+//	std::vector<Obstacle*> m_Obstacles;
+//};
 
 ///////////////////////////////////////
 //WANDER
@@ -106,44 +168,16 @@ public:
 	//Wander Behavior
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
 
-	void SetMaxAngle(const float& rad) { m_MaxAngle = rad; }
-	void SetOffset(const float& offset) { m_Offset = offset; }
-	void SetRadius(const float& radius) { m_Radius = radius; }
+	void SetWanderOffset(const float& offset) { m_Offset = offset; }
+	void SetWanderRadius(const float& radius) { m_Radius = radius; }
+	void SetMaxAngleChange(const float& rad) { m_MaxAngle = rad; }
 
 private:
-	float m_MaxAngle{ Elite::ToRadians(40.f) };
-	float m_Offset{ 10.f }; 
-	float m_Radius{ 5.f }; 
+	float m_Offset{ 6.f };
+	float m_Radius{ 4.f };
+	float m_MaxAngle{ Elite::ToRadians(45.f) };
 	float m_Angle{ 0.f };
 };
 
-///////////////////////////////////////
-//PURSUIT
-//****
-class Pursuit : public Seek
-{
-public:
-	Pursuit() = default;
-	virtual ~Pursuit() = default;
 
-	//Pursuit Behavior
-	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
-};
 
-///////////////////////////////////////
-//EVADE
-//****
-class Evade : public Pursuit
-{
-public:
-	Evade() = default;
-	virtual ~Evade() = default;
-	void SetEvadeRange(const float& range) { m_EvadeRange = range; }
-	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
-
-	private:
-	float	m_EvadeRange{-1};
-	
-};
-
-#endif

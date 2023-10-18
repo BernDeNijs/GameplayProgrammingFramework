@@ -1,5 +1,4 @@
-#ifndef STEERINGBEHAVIORS_APPLICATION_H
-#define STEERINGBEHAVIORS_APPLICATION_H
+#pragma once
 //-----------------------------------------------------------------
 // Includes & Forward Declarations
 //-----------------------------------------------------------------
@@ -29,9 +28,9 @@ private:
 	TargetData m_MouseTarget = {};
 	bool m_UseMouseTarget = true;
 	bool m_VisualizeMouseTarget = true;
-
+	
 	float m_TrimWorldSize = 100.f;
-	int m_FlockSize = 2;
+	int m_FlockSize = 500;
 
 	Flock* m_pFlock = nullptr;
 	SteeringAgent* m_pAgentToEvade = nullptr;
@@ -40,4 +39,3 @@ private:
 	App_Flocking(const App_Flocking&) = delete;
 	App_Flocking& operator=(const App_Flocking&) = delete;
 };
-#endif

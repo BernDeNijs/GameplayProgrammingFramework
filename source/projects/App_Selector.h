@@ -3,9 +3,10 @@
 // Create the define here using the "ActiveApp_..." convention and set up the correct include and typedef in the #ifdef below.
 
 //#define ActiveApp_Sandbox
-//#define ActiveApp_Steering
+//#define ActiveApp_SteeringBehaviors
 //#define ActiveApp_CombinedSteering
-#define ActiveApp_Flocking
+//#define ActiveApp_Flocking
+#define ActiveApp_GraphTheory
 
 //---------- Registered Applications -----------
 #ifdef ActiveApp_Sandbox
@@ -13,12 +14,12 @@
 typedef App_Sandbox CurrentApp;
 #endif
 
-#ifdef ActiveApp_Steering
+#ifdef ActiveApp_SteeringBehaviors
 #include "projects/Movement/SteeringBehaviors/Steering/App_SteeringBehaviors.h"
 typedef App_SteeringBehaviors CurrentApp;
 #endif
 
-#ifdef ActiveApp_CombinedSteering
+#ifdef  ActiveApp_CombinedSteering
 #include "projects/Movement/SteeringBehaviors/CombinedSteering/App_CombinedSteering.h"
 typedef App_CombinedSteering CurrentApp;
 #endif
@@ -28,8 +29,13 @@ typedef App_CombinedSteering CurrentApp;
 typedef App_Flocking CurrentApp;
 #endif
 
+#ifdef ActiveApp_GraphTheory
+#include "projects/GraphTheory/App_GraphTheory.h"
+typedef App_GraphTheory CurrentApp;
+#endif
+
 class App_Selector {
-public:
+public: 
 	static IApp* CreateApp() {
 		IApp* myApp = new CurrentApp();
 		return myApp;
