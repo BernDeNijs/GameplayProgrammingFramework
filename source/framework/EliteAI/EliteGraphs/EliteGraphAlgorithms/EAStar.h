@@ -35,7 +35,7 @@ namespace Elite
 			};
 		};
 
-		std::vector<GraphNode*> FindPath(GraphNode* pStartNode, GraphNode* pDestinationNode);
+		std::vector<GraphNode*> FindPath(GraphNode* pStartNode, GraphNode* pDestinationNode) const;
 
 	private:
 		float GetHeuristicCost(GraphNode* pStartNode, GraphNode* pEndNode) const;

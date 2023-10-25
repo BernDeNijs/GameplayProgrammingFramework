@@ -224,8 +224,8 @@ void App_PathfindingAStar::CalculatePath()
 		&& m_startPathId != m_endPathId)
 	{
 		//Select (uncomment) BFS Pathfinding or A* Pathfinding
-		auto pathfinder = BFS(m_pTerrainGraph);
-		//auto pathfinder = AStar(m_pTerrainGraph, m_heuristicFunction);
+		//auto pathfinder = BFS(m_pTerrainGraph);
+		auto pathfinder = AStar(m_pTerrainGraph, m_heuristicFunction);
 		auto startNode = m_pTerrainGraph->GetNode(m_startPathId);
 		auto endNode = m_pTerrainGraph->GetNode(m_endPathId);
 
