@@ -4,8 +4,8 @@
 #include "framework\EliteAI\EliteGraphs\EliteGraph\EGraphNode.h"
 #include "framework\EliteAI\EliteGraphs\EliteGraph\EGraphConnection.h"
 #include "framework\EliteAI\EliteGraphs\EliteGraph\EGraph.h"
-//#include "framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.h"
-//#include "framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.h"
+#include "framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.h"
+#include "framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.h"
 
 using namespace Elite;
 
@@ -124,98 +124,98 @@ bool GraphEditor::UpdateGraph(Graph* pGraph)
 }
 
 
-//bool GraphEditor::UpdateGraph(GridGraph* pGraph)
-//{
-//	bool hasGraphChanged = false;
-//
-//	//Check if clicked on grid
-//	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eLeft))
-//	{
-//		auto mouseData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eLeft);
-//		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseData.X, (float)mouseData.Y });
-//		int idx = pGraph->GetNodeIdAtPosition(mousePos);
-//
-//		if (idx != invalid_node_id)
-//		{
-//			pGraph->AddConnectionsToAdjacentCells(idx);
-//			hasGraphChanged = true;
-//		}
-//	}
-//	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eRight))
-//	{
-//		auto mouseData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eRight);
-//		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseData.X, (float)mouseData.Y });
-//		int idx = pGraph->GetNodeIdAtPosition(mousePos);
-//
-//		if (idx != invalid_node_id)
-//		{
-//			pGraph->RemoveAllConnectionsWithNode(idx);
-//			hasGraphChanged = true;
-//		}
-//	}
-//	return hasGraphChanged;
-//}
-//
-//bool GraphEditor::UpdateGraph(TerrainGridGraph* pGraph)
-//{
-//#pragma region UI
-//	//Extra Grid Terrain UI
-//	{
-//		//Setup
-//		int menuWidth = 115;
-//		int const width = DEBUGRENDERER2D->GetActiveCamera()->GetWidth();
-//		int const height = DEBUGRENDERER2D->GetActiveCamera()->GetHeight();
-//		bool windowActive = true;
-//		ImGui::SetNextWindowPos(ImVec2(10, 10));
-//		ImGui::SetNextWindowSize(ImVec2((float)menuWidth, (float)height / 2.0f));
-//		ImGui::Begin("Grid Editing", &windowActive, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-//		ImGui::PushAllowKeyboardFocus(false);
-//
-//		ImGui::Text("Terrain Type");
-//		ImGui::Indent();
-//		if (ImGui::Combo("", &m_SelectedTerrainType, "Ground\0Mud\0Water", 3))
-//		{
-//
-//		}
-//
-//		/*Spacing*/ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing(); ImGui::Spacing();
-//
-//		//End
-//		ImGui::PopAllowKeyboardFocus();
-//		ImGui::End();
-//	}
-//#pragma endregion
-//
-//
-//	//Check if clicked on grid
-//	auto mouseLeftData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eLeft);
-//	auto mouseMotionData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseMotion);
-//
-//	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eLeft))
-//	{
-//		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseLeftData.X, (float)mouseLeftData.Y });
-//		int idx = pGraph->GetNodeIdAtPosition(mousePos);
-//
-//		if (idx != invalid_node_id)
-//		{
-//			std::vector<TerrainType> terrainTypeVec{ TerrainType::Ground, TerrainType::Mud, TerrainType::Water };
-//
-//			pGraph->SetNodeTerrainType(idx, terrainTypeVec[m_SelectedTerrainType]);
-//			switch (terrainTypeVec[m_SelectedTerrainType])
-//			{
-//			case TerrainType::Water:
-//				pGraph->RemoveAllConnectionsWithNode(idx);
-//				break;
-//			default:
-//				pGraph->RemoveAllConnectionsWithNode(idx);
-//				pGraph->AddConnectionsToAdjacentCells(idx);
-//				break;
-//			}
-//			return true;
-//		}
-//	}
-//
-//	return false;
-//}
+bool GraphEditor::UpdateGraph(GridGraph* pGraph)
+{
+	bool hasGraphChanged = false;
+
+	//Check if clicked on grid
+	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eLeft))
+	{
+		auto mouseData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eLeft);
+		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseData.X, (float)mouseData.Y });
+		int idx = pGraph->GetNodeIdAtPosition(mousePos);
+
+		if (idx != invalid_node_id)
+		{
+			pGraph->AddConnectionsToAdjacentCells(idx);
+			hasGraphChanged = true;
+		}
+	}
+	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eRight))
+	{
+		auto mouseData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eRight);
+		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseData.X, (float)mouseData.Y });
+		int idx = pGraph->GetNodeIdAtPosition(mousePos);
+
+		if (idx != invalid_node_id)
+		{
+			pGraph->RemoveAllConnectionsWithNode(idx);
+			hasGraphChanged = true;
+		}
+	}
+	return hasGraphChanged;
+}
+
+bool GraphEditor::UpdateGraph(TerrainGridGraph* pGraph)
+{
+#pragma region UI
+	//Extra Grid Terrain UI
+	{
+		//Setup
+		int menuWidth = 115;
+		int const width = DEBUGRENDERER2D->GetActiveCamera()->GetWidth();
+		int const height = DEBUGRENDERER2D->GetActiveCamera()->GetHeight();
+		bool windowActive = true;
+		ImGui::SetNextWindowPos(ImVec2(10, 10));
+		ImGui::SetNextWindowSize(ImVec2((float)menuWidth, (float)height / 2.0f));
+		ImGui::Begin("Grid Editing", &windowActive, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+		ImGui::PushAllowKeyboardFocus(false);
+
+		ImGui::Text("Terrain Type");
+		ImGui::Indent();
+		if (ImGui::Combo("", &m_SelectedTerrainType, "Ground\0Mud\0Water", 3))
+		{
+
+		}
+
+		/*Spacing*/ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing(); ImGui::Spacing();
+
+		//End
+		ImGui::PopAllowKeyboardFocus();
+		ImGui::End();
+	}
+#pragma endregion
+
+
+	//Check if clicked on grid
+	auto mouseLeftData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseButton, Elite::InputMouseButton::eLeft);
+	auto mouseMotionData = INPUTMANAGER->GetMouseData(Elite::InputType::eMouseMotion);
+
+	if (INPUTMANAGER->IsMouseButtonUp(InputMouseButton::eLeft))
+	{
+		Vector2 mousePos = DEBUGRENDERER2D->GetActiveCamera()->ConvertScreenToWorld({ (float)mouseLeftData.X, (float)mouseLeftData.Y });
+		int idx = pGraph->GetNodeIdAtPosition(mousePos);
+
+		if (idx != invalid_node_id)
+		{
+			std::vector<TerrainType> terrainTypeVec{ TerrainType::Ground, TerrainType::Mud, TerrainType::Water };
+
+			pGraph->SetNodeTerrainType(idx, terrainTypeVec[m_SelectedTerrainType]);
+			switch (terrainTypeVec[m_SelectedTerrainType])
+			{
+			case TerrainType::Water:
+				pGraph->RemoveAllConnectionsWithNode(idx);
+				break;
+			default:
+				pGraph->RemoveAllConnectionsWithNode(idx);
+				pGraph->AddConnectionsToAdjacentCells(idx);
+				break;
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
 
 

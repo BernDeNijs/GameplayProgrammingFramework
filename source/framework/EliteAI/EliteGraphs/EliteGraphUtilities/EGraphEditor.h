@@ -4,8 +4,8 @@
 namespace Elite
 {
 	class Graph;
-	//class GridGraph;
-	//class TerrainGridGraph;
+	class GridGraph;
+	class TerrainGridGraph;
 
 	class GraphEditor final
 	{
@@ -15,9 +15,9 @@ namespace Elite
 
 		bool UpdateGraph(Graph* pGraph);
 
-		//bool UpdateGraph(GridGraph* pGraph);
+		bool UpdateGraph(GridGraph* pGraph);
 
-		//bool UpdateGraph(TerrainGridGraph* pGraph);
+		bool UpdateGraph(TerrainGridGraph* pGraph);
 
 	private:
 		const float MOUSE_MOVE_TRESHOLD = 4.0f;

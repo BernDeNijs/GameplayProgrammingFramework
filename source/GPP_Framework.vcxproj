@@ -183,10 +183,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EAStar.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EBFS.cpp" />
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphEditor.cpp" />
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphRenderer.cpp" />
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraph\EGraph.cpp" />
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraph\EGraphNode.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGraphNode.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.cpp" />
     <ClCompile Include="framework\EliteGeometry\EGeometry2DTypes.cpp" />
     <ClCompile Include="framework\EliteInput\EInputManager.cpp" />
     <ClCompile Include="framework\EliteMath\EMatrix2x3.cpp" />
@@ -201,6 +206,7 @@
     <ClCompile Include="framework\EliteRendering\SDLIntegration\SDLHelpers\gl3w.c" />
     <ClCompile Include="framework\main.cpp" />
     <ClCompile Include="projects\GraphTheory\App_GraphTheory.cpp" />
+    <ClCompile Include="projects\Movement\Pathfinding\PathfindingAStar\App_PathfindingAStar.cpp" />
     <ClCompile Include="projects\Movement\Sandbox\App_Sandbox.cpp" />
     <ClCompile Include="projects\Movement\Sandbox\SandboxAgent.cpp" />
     <ClCompile Include="projects\Movement\SteeringBehaviors\CombinedSteering\App_CombinedSteering.cpp" />
@@ -223,7 +229,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EAStar.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EBFS.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EEularianPath.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EHeuristic.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EHeuristicFunctions.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphNodeFactory\EGraphNodeFactory.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphEditor.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphRenderer.h" />
@@ -232,6 +242,11 @@
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraph\EGraphConnection.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraph\EGraphEnums.h" />
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraph\EGraphNode.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EConnectionCostCalculator.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainCostCalculator.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGraphNode.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.h" />
     <ClInclude Include="framework\EliteGeometry\EGeometry.h" />
     <ClInclude Include="framework\EliteGeometry\EGeometry2DTypes.h" />
     <ClInclude Include="framework\EliteGeometry\EGeometry2DUtilities.h" />
@@ -270,6 +285,7 @@
     <ClInclude Include="framework\EliteWindow\SDLWindow\SDLWindow.h" />
     <ClInclude Include="projects\App_Selector.h" />
     <ClInclude Include="projects\GraphTheory\App_GraphTheory.h" />
+    <ClInclude Include="projects\Movement\Pathfinding\PathfindingAStar\App_PathfindingAStar.h" />
     <ClInclude Include="projects\Movement\Sandbox\App_Sandbox.h" />
     <ClInclude Include="projects\Movement\Sandbox\SandboxAgent.h" />
     <ClInclude Include="projects\Movement\SteeringBehaviors\CombinedSteering\App_CombinedSteering.h" />

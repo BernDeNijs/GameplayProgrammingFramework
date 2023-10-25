@@ -5,7 +5,7 @@
 #include "../EliteGraph/EGraphNode.h"
 #include "../EliteGraph/EGraphConnection.h"
 #include "../EliteGraph/EGraph.h"
-//#include "../EliteGridGraph/EGridGraph.h"
+#include "../EliteGridGraph/EGridGraph.h"
 
 namespace Elite
 {
@@ -99,64 +99,64 @@ namespace Elite
 	}
 
 
-	//void GraphRenderer::RenderGraph(
-	//	GridGraph* pGraph,
-	//	bool renderNodes,
-	//	bool renderNodeNumbers,
-	//	bool renderConnections,
-	//	bool renderConnectionsCosts) const
-	//{
-	//	if (renderNodes)
-	//	{
-	//		//Nodes/Grid
-	//		for (auto r = 0; r < pGraph->m_NrOfRows; ++r)
-	//		{
-	//			for (auto c = 0; c < pGraph->m_NrOfColumns; ++c)
-	//			{
-	//				int idx = pGraph->GetNodeId(c, r);
-	//				Vector2 cellPos{ pGraph->GetNodePos(idx) };
-	//				int cellSize = pGraph->m_CellSize;
+	void GraphRenderer::RenderGraph(
+		GridGraph* pGraph,
+		bool renderNodes,
+		bool renderNodeNumbers,
+		bool renderConnections,
+		bool renderConnectionsCosts) const
+	{
+		if (renderNodes)
+		{
+			//Nodes/Grid
+			for (auto r = 0; r < pGraph->m_NrOfRows; ++r)
+			{
+				for (auto c = 0; c < pGraph->m_NrOfColumns; ++c)
+				{
+					int idx = pGraph->GetNodeId(c, r);
+					Vector2 cellPos{ pGraph->GetNodePos(idx) };
+					int cellSize = pGraph->m_CellSize;
 
-	//				//Node
-	//				std::string nodeTxt{};
-	//				if (renderNodeNumbers)
-	//					nodeTxt = GetNodeText(pGraph->GetNode(c,r));
+					//Node
+					std::string nodeTxt{};
+					if (renderNodeNumbers)
+						nodeTxt = GetNodeText(pGraph->GetNode(c,r));
 
-	//				RenderRectNode(cellPos, nodeTxt, float(cellSize), GetNodeColor(pGraph->GetNode(c,r)), 0.1f);
-	//			}
-	//		}
-	//	}
+					RenderRectNode(cellPos, nodeTxt, float(cellSize), GetNodeColor(pGraph->GetNode(c,r)), DEBUGRENDERER2D->NextDepthSlice());
+				}
+			}
+		}
 
-	//	if (renderConnections)
-	//	{
-	//		for (auto node : pGraph->GetAllNodes())
-	//		{
-	//			//Connections
-	//			for (auto con : pGraph->GetConnectionsFromNode(node->GetId()))
-	//			{
-	//				std::string conTxt{ };
-	//				if (renderConnectionsCosts)
-	//					conTxt = GetConnectionText(con);
+		if (renderConnections)
+		{
+			for (auto node : pGraph->GetAllNodes())
+			{
+				//Connections
+				for (auto con : pGraph->GetConnectionsFromNode(node->GetId()))
+				{
+					std::string conTxt{ };
+					if (renderConnectionsCosts)
+						conTxt = GetConnectionText(con);
 
-	//				RenderConnection(con, pGraph->GetNodePos(con->GetToNodeId()), pGraph->GetNodePos(con->GetFromNodeId()), conTxt, GetConnectionColor(con));
-	//			}
-	//		}
-	//	}
-	//}
+					RenderConnection(con, pGraph->GetNodePos(con->GetToNodeId()), pGraph->GetNodePos(con->GetFromNodeId()), conTxt, GetConnectionColor(con), DEBUGRENDERER2D->NextDepthSlice());
+				}
+			}
+		}
+	}
 
 
-	//void GraphRenderer::HighlightNodes(GridGraph* pGraph, std::vector<GraphNode*> path, Color col /*= HIGHLIGHTED_NODE_COLOR*/) const
-	//{
-	//	for (auto& node : path)
-	//	{
-	//		//Node
-	//		RenderCircleNode(
-	//			pGraph->GetNodePos(node->GetId()),
-	//			"",
-	//			3.1f,
-	//			col,
-	//			-0.2f
-	//		);
-	//	}
-	//}
+	void GraphRenderer::HighlightNodes(GridGraph* pGraph, std::vector<GraphNode*> path, Color col /*= HIGHLIGHTED_NODE_COLOR*/) const
+	{
+		for (auto& node : path)
+		{
+			//Node
+			RenderCircleNode(
+				pGraph->GetNodePos(node->GetId()),
+				"",
+				3.1f,
+				col,
+				DEBUGRENDERER2D->NextDepthSlice()
+			);
+		}
+	}
 }

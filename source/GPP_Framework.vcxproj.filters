@@ -34,6 +34,12 @@
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphRenderer.cpp" />
     <ClCompile Include="projects\Movement\SteeringBehaviors\PathFollow\PathFollowSteeringBehavior.cpp" />
     <ClCompile Include="projects\GraphTheory\App_GraphTheory.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EAStar.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EBFS.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGraphNode.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.cpp" />
+    <ClCompile Include="projects\Movement\Pathfinding\PathfindingAStar\App_PathfindingAStar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -99,6 +105,16 @@
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphVisuals.h" />
     <ClInclude Include="projects\Movement\SteeringBehaviors\PathFollow\PathFollowSteeringBehavior.h" />
     <ClInclude Include="projects\GraphTheory\App_GraphTheory.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EAStar.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EBFS.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EHeuristic.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EHeuristicFunctions.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EConnectionCostCalculator.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGridGraph\EGridGraph.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainCostCalculator.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGraphNode.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteTerrainGridGraph\ETerrainGridGraph.h" />
+    <ClInclude Include="projects\Movement\Pathfinding\PathfindingAStar\App_PathfindingAStar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

@@ -37,7 +37,7 @@ namespace Elite
 	{
 
 		// If the graph is not connected, there can be no Eulerian Trail
-		if (!IsConnected) return Eulerianity::notEulerian;
+		if (!IsConnected()) return Eulerianity::notEulerian;
 
 
 		// Count nodes with odd degree 
