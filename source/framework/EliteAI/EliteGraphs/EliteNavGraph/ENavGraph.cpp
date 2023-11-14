@@ -69,9 +69,50 @@ Elite::Polygon* NavGraph::GetNavMeshPolygon() const
 void NavGraph::CreateNavigationGraph()
 {
 	//1. Go over all the edges of the navigationmesh and create a node on the center of each edge
+	//std::vector<Line*> lines = m_pNavMeshPolygon->GetLines();
+	//for (const Line* line : lines)
+	for (const Line* line : m_pNavMeshPolygon->GetLines())
+	{
+		if (m_pNavMeshPolygon->GetTrianglesFromLineIndex(line->index).size() != 2) continue;
+		AddNode(new NavGraphNode(line->index,(line->p1 + line->p2) * 0.5f));
+	}
 
 	//2  Now that every node is created, connect the nodes that share the same triangle (for each triangle, ... )
-
+	//std::vector<Triangle*> triangles = m_pNavMeshPolygon->GetTriangles();
+	for (const Triangle* triangle : m_pNavMeshPolygon->GetTriangles())
+	{
+		std::vector<int> tempIds;
+		for (int lineIdx : triangle->metaData.IndexLines)
+		{
+			int nodeId = GetNodeIdFromLineIndex(lineIdx);
+			//check for invalid
+			if (nodeId == -1) continue;
+			tempIds.push_back(nodeId);
+		}
+		
+		if (tempIds.size() == 2)
+		{
+			AddConnection(new GraphConnection(
+				tempIds[0], 
+				tempIds[1]
+			));
+		}
+		else if (tempIds.size() == 3)
+		{
+			AddConnection(new GraphConnection(
+				tempIds[0],
+				tempIds[1]
+			));
+			AddConnection(new GraphConnection(
+				tempIds[1],
+				tempIds[2]
+			));
+			AddConnection(new GraphConnection(
+				tempIds[0],
+				tempIds[2])
+			);
+		}
+	}
 	//3. Set the connections cost to the actual distance
 	SetConnectionCostsToDistances();
 }

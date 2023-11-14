@@ -92,7 +92,7 @@ std::vector<GraphNode*>AStar::FindPath(GraphNode* pStartNode, GraphNode* pEndNod
 				nextNode,
 				connection,
 				newCost,
-				GetHeuristicCost(nextNode,pEndNode)
+				GetHeuristicCost(nextNode,pEndNode) + newCost
 			}
 			);
 		}

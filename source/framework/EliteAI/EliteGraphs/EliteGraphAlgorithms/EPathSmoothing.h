@@ -70,6 +70,9 @@ namespace Elite
 			Vector2 rightLeg = portals[rightLegIdx].Line.p1 - apexPos;
 			Vector2 leftLeg = portals[leftLegIdx].Line.p2 - apexPos;
 
+			//add apex point to the path
+			vPath.push_back(apexPos);
+
 			for (unsigned int portalIdx = 1; portalIdx < amtPortals; ++portalIdx)
 			{
 				//Local
@@ -77,19 +80,68 @@ namespace Elite
 
 				//--- RIGHT CHECK ---
 				//1. See if moving funnel inwards - RIGHT
-
+				Vector2 newRightLeg = portal.Line.p1 - apexPos;
+				if (Cross(newRightLeg , rightLeg) <= 0.0f)
+				{
 					//2. See if new line degenerates a line segment - RIGHT
+					if (Cross(newRightLeg,leftLeg) >= 0) //not crossing
+					{
+						rightLeg = newRightLeg;
+						rightLegIdx = portalIdx;
+					}
+					else
+					{
+						apexPos += leftLeg;
+						apexIdx = leftLegIdx;
+						portalIdx = leftLegIdx + 1;
+						leftLegIdx = rightLegIdx = portalIdx;
+						vPath.push_back(apexPos);
+						
+						if (portalIdx < amtPortals)
+						{
+							rightLeg = portals[rightLegIdx].Line.p1 - apexPos;
+							leftLeg = portals[leftLegIdx].Line.p2 - apexPos;
+							continue;
+						}
+					}
+				}
+
+					
 
 
 				//--- LEFT CHECK ---
 				//1. See if moving funnel inwards - LEFT
-
+				Vector2 newLeftLeg = portal.Line.p2 - apexPos;
+				if (Cross(newLeftLeg, leftLeg) >= 0.f)
+				{
 					//2. See if new line degenerates a line segment - LEFT
+					if (Cross(newLeftLeg,rightLeg) < 0) //not crossing
+					{
+						leftLeg = newLeftLeg;
+						leftLegIdx = portalIdx;
+					}
+					else
+					{
+						apexPos += rightLeg;
+						apexIdx = rightLegIdx;
+						portalIdx = rightLegIdx + 1;
+						rightLegIdx = leftLegIdx = portalIdx;
+						vPath.push_back(apexPos);
+						if (portalIdx < amtPortals)
+						{
+							rightLeg = portals[rightLegIdx].Line.p1 - apexPos;
+							leftLeg = portals[leftLegIdx].Line.p2 - apexPos;
+							continue;
+						}
+					}
+				}
+					
+
 
 			}
 
 			// Add last path point (You can use the last portal p1 or p2 points as both are equal to the endPoint of the path
-
+			vPath.push_back(portals.back().Line.p1);
 			return vPath;
 		}
 	private:
