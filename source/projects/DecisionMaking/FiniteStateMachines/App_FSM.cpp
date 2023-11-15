@@ -104,7 +104,7 @@ void App_FSM::Start()
 	m_pIsSearchingTooLong = new ::FSMCondition::IsSearchingTooLong();
 
 	//4. Create the finite state machine with a starting state and the blackboard
-	auto pFSM = new FiniteStateMachine(m_pPatrolState, pBlackboard);
+	const auto pFSM = new FiniteStateMachine(m_pPatrolState, pBlackboard);
 
 	//5. Add the transitions for the states to the state machine
 	// stateMachine->AddTransition(startState, toState, condition)
