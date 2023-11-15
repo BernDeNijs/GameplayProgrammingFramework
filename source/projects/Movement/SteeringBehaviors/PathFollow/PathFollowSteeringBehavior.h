@@ -10,6 +10,9 @@ public:
 	virtual ~PathFollow();
 	void SetPath(std::vector<Elite::Vector2>& path);
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+
+	bool HasArrived() const;
+
 private:
 	Seek* m_pSeek = nullptr;
 	Arrive* m_pArrive = nullptr;

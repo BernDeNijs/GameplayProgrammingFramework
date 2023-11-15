@@ -44,6 +44,10 @@
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteNavGraph\ENavGraph.cpp" />
     <ClCompile Include="projects\Movement\Pathfinding\NavMeshGraph\App_NavMeshGraph.cpp" />
     <ClCompile Include="projects\Shared\NavigationColliderElement.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteDecisionMaking\EliteFiniteStateMachine\EFiniteStateMachine.cpp" />
+    <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\App_FSM.cpp" />
+    <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.cpp" />
+    <ClCompile Include="projects\DecisionMaking\SmartAgent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -125,6 +129,12 @@
     <ClInclude Include="framework\EliteAI\EliteGraphs\EliteNavGraph\ENavGraphNode.h" />
     <ClInclude Include="projects\Movement\Pathfinding\NavMeshGraph\App_NavMeshGraph.h" />
     <ClInclude Include="projects\Shared\NavigationColliderElement.h" />
+    <ClInclude Include="framework\EliteAI\EliteData\EBlackboard.h" />
+    <ClInclude Include="framework\EliteAI\EliteDecisionMaking\EliteFiniteStateMachine\EFiniteStateMachine.h" />
+    <ClInclude Include="framework\EliteAI\EliteDecisionMaking\EDecisionMaking.h" />
+    <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\App_FSM.h" />
+    <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.h" />
+    <ClInclude Include="projects\DecisionMaking\SmartAgent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

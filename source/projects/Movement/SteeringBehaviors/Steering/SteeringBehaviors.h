@@ -74,7 +74,7 @@ public:
 
 	//Seek Behaviour
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
-	void SetTargetRadius(float radius) { m_TargetRadius = radius; m_SlowRadius = 5.f * radius; }
+	void SetSlowRadius(float radius) {  m_SlowRadius = radius; m_TargetRadius = radius * 0.0f;}
 
 private:
 	float m_SlowRadius{ 15.f };

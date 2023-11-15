@@ -7,7 +7,8 @@ PathFollow::PathFollow()
 {
 	m_pSeek = new Seek();
 	m_pArrive = new Arrive();
-	m_pArrive->SetTargetRadius(0.5f);
+	m_pArrive->SetSlowRadius(.5f);
+	m_pArrive->SetSlowRadius(5.f);
 }
 
 PathFollow::~PathFollow()
@@ -27,7 +28,7 @@ void PathFollow::SetPath(std::vector<Elite::Vector2>& path)
 SteeringOutput PathFollow::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
 
-	if (m_currentPathIndex < (int)m_pathVec.size())
+	if (m_currentPathIndex < m_pathVec.size())
 	{
 		float agentRadius = pAgent->GetRadius();
 
@@ -45,10 +46,15 @@ SteeringOutput PathFollow::CalculateSteering(float deltaT, SteeringAgent* pAgent
 	return SteeringOutput{};
 }
 
+bool PathFollow::HasArrived() const
+{
+	return m_currentPathIndex >= m_pathVec.size();
+}
+
 void PathFollow::GotoNextPathpoint()
 {
 	++m_currentPathIndex;
-	if (m_currentPathIndex >= (int)m_pathVec.size()) return;
+	if (m_currentPathIndex >= m_pathVec.size()) return;
 
 	if (m_currentPathIndex == m_pathVec.size() -1)
 	{

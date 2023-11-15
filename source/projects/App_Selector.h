@@ -8,7 +8,8 @@
 //#define ActiveApp_Flocking
 //#define ActiveApp_GraphTheory
 //#define ActiveApp_PathfindingAStar
-#define ActiveApp_NavMesh
+//#define ActiveApp_NavMesh
+#define ActiveApp_FSM
 
 //---------- Registered Applications -----------
 #ifdef ActiveApp_Sandbox
@@ -40,9 +41,15 @@ typedef App_GraphTheory CurrentApp;
 #include "projects/Movement/Pathfinding/PathfindingAStar/App_PathfindingAStar.h"
 typedef App_PathfindingAStar CurrentApp;
 #endif
+
 #ifdef ActiveApp_NavMesh
 #include "projects/Movement/Pathfinding/NavMeshGraph/App_NavMeshGraph.h"
 typedef App_NavMeshGraph CurrentApp;
+#endif
+
+#ifdef ActiveApp_FSM
+#include "projects/DecisionMaking/FiniteStateMachines/App_FSM.h"
+typedef App_FSM CurrentApp;
 #endif
 
 class App_Selector {

@@ -75,3 +75,10 @@ std::vector<Vector2> NavMeshPathfinding::FindPath(Vector2 startPos, Vector2 endP
 
 	return finalPath;
 }
+
+std::vector<Vector2> Elite::NavMeshPathfinding::FindPath(Vector2 startPos, Vector2 endPos, NavGraph* pNavGraph)
+{
+	std::vector<Vector2> debugNodePositions{};
+	std::vector<Portal> debugPortals{};
+	return FindPath(startPos,endPos,pNavGraph,debugNodePositions,debugPortals);
+}
