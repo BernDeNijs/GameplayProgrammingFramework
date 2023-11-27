@@ -9,7 +9,8 @@
 //#define ActiveApp_GraphTheory
 //#define ActiveApp_PathfindingAStar
 //#define ActiveApp_NavMesh
-#define ActiveApp_FSM
+//#define ActiveApp_FSM
+#define ActiveApp_BT
 
 //---------- Registered Applications -----------
 #ifdef ActiveApp_Sandbox
@@ -50,6 +51,11 @@ typedef App_NavMeshGraph CurrentApp;
 #ifdef ActiveApp_FSM
 #include "projects/DecisionMaking/FiniteStateMachines/App_FSM.h"
 typedef App_FSM CurrentApp;
+#endif
+
+#ifdef ActiveApp_BT
+#include "projects/DecisionMaking/BehaviorTrees/App_BT.h"
+typedef App_BT CurrentApp;
 #endif
 
 class App_Selector {

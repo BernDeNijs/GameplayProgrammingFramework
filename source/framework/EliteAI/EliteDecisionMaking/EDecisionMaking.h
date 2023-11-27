@@ -4,10 +4,8 @@
 /*=============================================================================*/
 // EDecisionMaking.h: General Decision making header that includes all Decision making structures and blackboard data
 /*=============================================================================*/
-//#ifndef ELITE_DECISION_MAKING
-//#define ELITE_DECISION_MAKING
-
-#pragma once
+#ifndef ELITE_DECISION_MAKING
+#define ELITE_DECISION_MAKING
 
 /* --- Data --- */
 //General Interface
@@ -31,9 +29,10 @@ namespace Elite
 /* --- Decision Making Structures --- */
 //FSM & BT
 #include "framework/EliteAI/EliteDecisionMaking/EliteFiniteStateMachine/EFiniteStateMachine.h"
+#include "framework/EliteAI/EliteDecisionMaking/EliteBehaviorTree/EBehaviorTree.h"
 
 
-//#endif
+#endif
 
 
 

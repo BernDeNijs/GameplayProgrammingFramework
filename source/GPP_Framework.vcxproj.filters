@@ -48,6 +48,8 @@
     <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\App_FSM.cpp" />
     <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.cpp" />
     <ClCompile Include="projects\DecisionMaking\SmartAgent.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteDecisionMaking\EliteBehaviorTree\EBehaviorTree.cpp" />
+    <ClCompile Include="projects\DecisionMaking\BehaviorTrees\App_BT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -135,6 +137,9 @@
     <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\App_FSM.h" />
     <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.h" />
     <ClInclude Include="projects\DecisionMaking\SmartAgent.h" />
+    <ClInclude Include="framework\EliteAI\EliteDecisionMaking\EliteBehaviorTree\EBehaviorTree.h" />
+    <ClInclude Include="projects\DecisionMaking\BehaviorTrees\App_BT.h" />
+    <ClInclude Include="projects\DecisionMaking\BehaviorTrees\Behaviors.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
